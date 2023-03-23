@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity">
+
+    <ImageView
+        android:id="@+id/main_iv"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:src="@drawable/splash_image"
+        android:layout_marginTop="120dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/main_bt_ll"/>
+
+    <LinearLayout
+        android:id="@+id/main_bt_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="80dp"
+        app:layout_constraintTop_toBottomOf="@id/main_iv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/find_by_map_cv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:backgroundTint="@color/primary"
+            app:cardCornerRadius="10dp">
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/ic_outline_map_24"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="지도로 찾기"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="bottom|center"
+                android:textAppearance="@style/main_button_text"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/find_by_subway_cv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:backgroundTint="@color/primary"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:cardCornerRadius="10dp">
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/outline_subway_24"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="지하철로 찾기"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="bottom|center"
+                android:textAppearance="@style/main_button_text"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/find_by_university_cv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:backgroundTint="@color/primary"
+            app:cardCornerRadius="10dp">
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center|top"
+                android:src="@drawable/ic_outline_school_24"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="대학교로 찾기"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="bottom|center"
+                android:textAppearance="@style/main_button_text"/>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
