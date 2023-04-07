@@ -29,13 +29,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.LoginActivity"
+            android:exported="false"/>
         <activity
             android:name=".ui.MainActivity"
             android:exported="false"/>
-        <activity
-            android:name=".ui.MapActivity"
-            android:exported="false">
-        </activity>
+<!--        <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.VIEW"/>-->
+<!--                <category android:name="android.intent.category.DEFAULT"/>-->
+<!--                <category android:name="android.intent.category.BROWSABLE"/>-->
+<!--                <data android:host="oauth"-->
+<!--                    android:scheme="kakao534c304e8d235c4f010e28930e8b8b73"/>-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
         <activity
             android:name=".ui.DetailActivity"
             android:exported="false"/>
@@ -44,11 +52,13 @@
             android:exported="false"/>
         <activity
             android:name=".ui.SearchActivity"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
+            android:exported="false"
+            android:windowSoftInputMode="stateAlwaysVisible">
         </activity>
+        <activity android:name=".ui.FilterActivity"
+            android:exported="false"/>
+        <activity android:name=".ui.ReviewActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

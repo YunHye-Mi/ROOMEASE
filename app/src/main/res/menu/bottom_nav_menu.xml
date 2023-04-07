@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/mapFragment"
+        app:showAsAction="always"
+        android:enabled="true"
+        android:title="지도"
+        android:icon="@drawable/ic_outline_map_24"
+        tools:ignore="AlwaysShowAction" />
+    <item
+        android:id="@+id/recommendFragment"
+        app:showAsAction="always"
+        android:icon="@drawable/outline_priority_high_24"
+        android:title="추천목록" />
+    <item
+        android:id="@+id/likeFragment"
+        app:showAsAction="always"
+        android:icon="@drawable/outline_favorite_border_24"
+        android:title="찜목록" />
+    <item
+        android:id="@+id/moreFragment"
+        app:showAsAction="always"
+        android:icon="@drawable/baseline_more_horiz_24"
+        android:title="더보기" />
+</menu>

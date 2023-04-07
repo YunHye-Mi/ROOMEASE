@@ -2,11 +2,11 @@
     <!-- Base application theme. -->
     <style name="Theme.CapstoneDesign2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">#FFB700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondary">@color/brown</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
@@ -16,26 +16,76 @@
 
 <!--  text appearance  -->
     <style name="main_button_text">
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">@font/suit_bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">@font/suit_medium</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textAlignment">center</item>
     </style>
+
     <style name="map_filter_text">
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/suit_semibold</item>
         <item name="android:textSize">15sp</item>
     </style>
 
+    <style name="after_map_filter_text">
+        <item name="android:textColor">#C69C6D</item>
+        <item name="android:fontFamily">@font/suit_semibold</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="map_select_filter">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/suit_bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
     <style name="map_filter_button">
-        <item name="android:textColor">#666666</item>
-        <item name="android:textSize">10sp</item>
-        <item name="android:fontFamily">@font/suit_regular</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/suit_medium</item>
     </style>
 
     <style name="map_select_filter_text">
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAlignment">center</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/suit_regular</item>
+    </style>
+
+    <style name="map_marker">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/suit_extrabold</item>
+    </style>
+
+    <style name="more_text">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/suit_medium</item>
+    </style>
+
+    <style name="result_top">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/suit_bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="tabview_text">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/suit_medium</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="detail_main_text">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/suit_bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="detail_semi_text">
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/suit_medium</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 </resources>

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">CapstoneDesign2</string>
+
+    <string-array name="sort_spinner">
+        <item>가까운순</item>
+        <item>저렴한순</item>
+        <item>넓은순</item>
+        <item>최신순</item>
+    </string-array>
+
 </resources>

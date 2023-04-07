@@ -3,6 +3,7 @@ package com.example.capstonedesign2.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.capstonedesign2.R
 import com.example.capstonedesign2.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -12,23 +13,53 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        onClickListener()
+        var spf = getSharedPreferences("filter", MODE_PRIVATE)
+        var editor = spf.edit()
+        editor.clear()
+        editor.commit()
+
+        initBottomNavigation()
+
     }
 
-    private fun onClickListener() {
-        binding.findByMapCv.setOnClickListener {
-            val intent = Intent(this, MapActivity::class.java)
-            startActivity(intent)
-        }
+    private fun initBottomNavigation(){ //하단 네비게이션
 
-        binding.findBySubwayCv.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
-        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_frm, MapFragment())
+            .commitAllowingStateLoss()
 
-        binding.findByUniversityCv.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
+        binding.mainBnv.setOnItemSelectedListener{ item ->
+            when (item.itemId) {
+
+                R.id.mapFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, MapFragment())
+                        .commitAllowingStateLoss()
+                    return@setOnItemSelectedListener true
+                }
+
+                R.id.recommendFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, RecommendFragment())
+                        .commitAllowingStateLoss()
+                    return@setOnItemSelectedListener true
+                }
+
+                R.id.likeFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, LikeFragment())
+                        .commitAllowingStateLoss()
+                    return@setOnItemSelectedListener true
+                }
+
+                R.id.moreFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, MoreFragment())
+                        .commitAllowingStateLoss()
+                    return@setOnItemSelectedListener true
+                }
+            }
+            false
         }
     }
 }

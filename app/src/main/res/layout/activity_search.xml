@@ -6,6 +6,67 @@
     android:layout_height="match_parent"
     tools:context=".ui.SearchActivity">
 
-    
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/back_iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/outline_arrow_back_ios_24"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="5dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <SearchView
+        android:id="@+id/search_tv"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="50dp"
+        android:background="@drawable/white_round_shape"
+        android:fontFamily="@font/suit_medium"
+        android:gravity="center_vertical"
+        android:focusable="false"
+        android:focusableInTouchMode="true"
+        android:paddingStart="3dp"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/back_iv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/clear_text_iv"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="33dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/baseline_clear_24"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:src="@drawable/splash_image"
+        android:alpha="0.1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
