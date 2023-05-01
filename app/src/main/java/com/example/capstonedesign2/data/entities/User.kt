@@ -1,6 +1,8 @@
 package com.example.capstonedesign2.data.entities
 
 data class User(
-    var name: String? = "",
-
+    var id : Int,
+    var token: String,
+    var nickname: String = "",
+    var inter_num: String? = "" // 공인중개사 번호
 )

@@ -36,11 +36,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="선호조건 변경"
+        android:text="공인중개사 등록"
         android:textAppearance="@style/more_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/review_list"/>
+
+<!--    <TextView-->
+<!--        android:id="@+id/hope_case_tv"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:text="선호조건 변경"-->
+<!--        android:textAppearance="@style/more_text"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/review_list"/>-->
 
     <TextView
         android:id="@+id/sign_out_tv"

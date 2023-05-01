@@ -1,20 +1,11 @@
-package com.example.capstonedesign2.ui
+package com.example.capstonedesign2.ui.map.search
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.KeyEvent
-import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.SearchView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import com.example.capstonedesign2.R
 import com.example.capstonedesign2.databinding.ActivitySearchBinding
 
 class SearchActivity : AppCompatActivity() {

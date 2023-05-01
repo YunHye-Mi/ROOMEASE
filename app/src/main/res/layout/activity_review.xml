@@ -1,6 +1,579 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:orientation="horizontal"
+        android:background="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/outline_arrow_back_ios_24"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="10dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="50dp"
+            android:text="리뷰 작성"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:fontFamily="@font/suit_medium"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/front_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="거주시기"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textAppearance="@style/review_text"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:rowCount="2"
+            android:columnCount="3"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp">
+            <TextView
+                android:id="@+id/live5_tv"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="5년 이내"
+                android:padding="10dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"/>
+            <TextView
+                android:id="@+id/live4_tv"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="4년 이내"
+                android:padding="10dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:layout_marginEnd="5dp"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <TextView
+                android:id="@+id/live3_tv"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="3년 이내"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <TextView
+                android:id="@+id/live2_tv"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="2년 이내"
+                android:padding="10dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <TextView
+                android:id="@+id/live1_tv"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="1년 이내"
+                android:padding="10dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <TextView
+                android:id="@+id/live_current_tv"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="현재 거주"
+                android:padding="10dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+        </GridLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#BBBBBB"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="연령대"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textAppearance="@style/review_text"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp">
+            <TextView
+                android:id="@+id/student_tv"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="대학생"
+                android:padding="10dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:layout_marginEnd="5dp"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <TextView
+                android:id="@+id/worker_tv"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="직장인"
+                android:padding="10dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:layout_marginEnd="5dp"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <TextView
+                android:id="@+id/no_tv"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="무직"
+                android:padding="10dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#BBBBBB"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="성별"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textAppearance="@style/review_text"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp">
+            <TextView
+                android:id="@+id/man_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="남성"
+                android:padding="10dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:layout_marginEnd="5dp"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <TextView
+                android:id="@+id/woman_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="여성"
+                android:padding="10dp"
+                android:background="@drawable/round_shape"
+                android:gravity="center"
+                android:layout_marginEnd="5dp"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/next_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="right"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp">
+            <TextView
+                android:id="@+id/next_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="다음"
+                android:textAlignment="viewEnd"
+                android:layout_marginEnd="5dp"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:textAppearance="@style/review_text"/>
+            <ImageView
+                android:id="@+id/next_iv"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/outline_arrow_forward_ios_24"
+                android:scaleType="centerCrop"
+                app:tint="#666666" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/second_page"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="교통여건"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textAppearance="@style/review_text"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="나쁨"
+                android:padding="10dp"
+                android:gravity="center"
+                android:layout_marginEnd="10dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <ImageView
+                android:id="@+id/public_star1_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/public_star2_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/public_star3_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/public_star4_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/public_star5_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="좋음"
+                android:padding="10dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#BBBBBB"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="주변환경"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textAppearance="@style/review_text"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="나쁨"
+                android:padding="10dp"
+                android:gravity="center"
+                android:layout_marginEnd="10dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <ImageView
+                android:id="@+id/ambient_star1_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/ambient_star2_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/ambient_star3_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/ambient_star4_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/ambient_star5_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="좋음"
+                android:padding="10dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#BBBBBB"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="거주환경"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textAppearance="@style/review_text"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="나쁨"
+                android:padding="10dp"
+                android:gravity="center"
+                android:layout_marginEnd="10dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+            <ImageView
+                android:id="@+id/live_star1_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/live_star2_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/live_star3_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/live_star4_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+            <ImageView
+                android:id="@+id/live_star5_iv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/baseline_star_rate_24"
+                app:tint="#BBBBBB" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="좋음"
+                android:padding="10dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/suit_regular"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#BBBBBB"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="사용자의견"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textAppearance="@style/review_text"/>
+
+        <EditText
+            android:id="@+id/review_et"
+            android:layout_width="match_parent"
+            android:layout_height="270dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:padding="8dp"
+            android:hint="예시) 처음에 곰팡이 냄세가 조금 심했는데 살면서 환기 많이 시키니까 줄어들었어요. 바로 앞에 술집이 있어서 밤에 조금 시끄러워요."
+            android:gravity="top"
+            android:textSize="16sp"
+            android:imeOptions="actionDone"
+            android:background="@drawable/round_shape"/>
+
+        <LinearLayout
+            android:id="@+id/done_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="right"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp">
+            <TextView
+                android:id="@+id/done_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="완료"
+                android:textAlignment="viewEnd"
+                android:layout_marginEnd="5dp"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:textAppearance="@style/review_text"/>
+            <ImageView
+                android:id="@+id/done_iv"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/outline_arrow_forward_ios_24"
+                android:scaleType="centerCrop"
+                app:tint="#666666" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

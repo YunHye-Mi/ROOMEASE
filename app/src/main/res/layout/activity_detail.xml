@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.DetailActivity">
+    tools:context=".ui.detail.DetailActivity">
 
     <LinearLayout
         android:id="@+id/view"
@@ -27,6 +27,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/white" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="50dp"
+            android:text="매물명"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:fontFamily="@font/suit_medium"
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <ScrollView
@@ -52,33 +62,45 @@
                 android:gravity="center_vertical"
                 app:layout_constraintTop_toBottomOf="@id/detail_iv">
                 <LinearLayout
-                    android:layout_width="230dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:layout_marginStart="20dp"
+                    android:layout_weight="2"
+                    android:layout_marginStart="15dp"
                     android:orientation="vertical">
                     <TextView
                         android:id="@+id/address_tv"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="주소"/>
+                        android:text="주소"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="12sp"
+                        android:textAppearance="@style/detail_semi_text"/>
                     <TextView
                         android:id="@+id/price_tv"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="보증금/월세"/>
+                        android:layout_marginEnd="10dp"
+                        android:text="보증금/월세"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/suit_semibold"/>
                     <TextView
                         android:id="@+id/admin_tv"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="관리비"/>
+                        android:layout_marginEnd="10dp"
+                        android:text="관리비"
+                        android:textSize="12sp"
+                        android:textAppearance="@style/detail_semi_text"/>
                 </LinearLayout>
                 <TextView
                     android:id="@+id/detail_live_tv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="실거래가"/>
+                    android:layout_weight="3"
+                    android:layout_marginEnd="15dp"
+                    android:text="실거래가"
+                    android:textAppearance="@style/detail_semi_text"/>
             </LinearLayout>
 
             <com.google.android.material.tabs.TabLayout

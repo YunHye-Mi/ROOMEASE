@@ -1,9 +1,8 @@
-package com.example.capstonedesign2.ui
+package com.example.capstonedesign2.ui.map
 
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.view.get
 import com.example.capstonedesign2.databinding.ActivityFilterBinding

@@ -1,16 +1,20 @@
-package com.example.capstonedesign2.ui
+package com.example.capstonedesign2.ui.map
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.capstonedesign2.R
-import com.example.capstonedesign2.databinding.*
+import com.example.capstonedesign2.databinding.FragmentMapBinding
+import com.example.capstonedesign2.ui.map.search.SearchActivity
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 
@@ -24,16 +28,19 @@ class MapFragment() : Fragment() {
     ): View? {
         binding = FragmentMapBinding.inflate(inflater, container, false)
 
-        val mapPoint = MapPoint.mapPointWithGeoCoord(37.566352778, 126.977952778)
+        var currentPoint = MapPoint.mapPointWithGeoCoord(37.566352778, 126.977952778)
 
-        val marker = MapPOIItem()
-        marker.tag = 1
-        marker.mapPoint = mapPoint
-        marker.markerType = MapPOIItem.MarkerType.CustomImage
-        marker.customImageResourceId = R.layout.zoomout_marker_layout
-        marker.isCustomImageAutoscale = false
-        marker.setCustomImageAnchor(1.0f, 1.0f)
-        binding.mapView.addPOIItem(marker)
+        var mapMarker = MapPOIItem()
+        mapMarker.apply {
+            itemName = "zoom-out marker"
+            tag = 0
+            mapPoint = currentPoint
+            markerType = MapPOIItem.MarkerType.CustomImage
+            customImageBitmap = Bitmap.createBitmap(viewConvertToBitmap())
+            isShowCalloutBalloonOnTouch = false
+        }
+
+        binding.mapView.addPOIItem(mapMarker)
 
         onClickListener()
 
@@ -42,12 +49,6 @@ class MapFragment() : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-        setFilter()
-    }
-
-    override fun onPause() {
-        super.onPause()
 
         setFilter()
     }
@@ -153,7 +154,6 @@ class MapFragment() : Fragment() {
             if (area_min != 0 && area_max != 0) {
                 binding.areaBt.setTextColor(Color.parseColor("#C69C6D"))
                 binding.areaBt.setBackgroundResource(R.drawable.select_brown_round_shape)
-                Log.d("평형", area_min.toString() + " / " + area_max.toString())
             } else {
                 binding.areaBt.setTextColor(Color.WHITE)
                 binding.areaBt.setBackgroundResource(R.drawable.brown_round_shape)
@@ -165,7 +165,6 @@ class MapFragment() : Fragment() {
                 if (price_min_d != 0 && price_max_d != 0) {
                     binding.priceBt.setTextColor(Color.parseColor("#C69C6D"))
                     binding.priceBt.setBackgroundResource(R.drawable.select_brown_round_shape)
-                    Log.d("전세", price_min_d.toString() + " / " + price_max_d.toString())
                 }
             } else {
                 if (price_min_d != 0 && price_max_d != 0
@@ -173,24 +172,18 @@ class MapFragment() : Fragment() {
                     && price_min_a != 0 && price_max_a != 0) {
                     binding.priceBt.setTextColor(Color.parseColor("#C69C6D"))
                     binding.priceBt.setBackgroundResource(R.drawable.select_brown_round_shape)
-                    Log.d("월세 보증금", price_min_d.toString() + " / " + price_max_d.toString())
-                    Log.d("월세 월세", price_min_m.toString() + " / " + price_max_m.toString())
-                    Log.d("월세 관리비", price_min_a.toString() + " / " + price_max_a.toString())
                 }
                 else if (price_min_m != 0 && price_max_m != 0) {
                     binding.priceBt.setTextColor(Color.parseColor("#C69C6D"))
                     binding.priceBt.setBackgroundResource(R.drawable.select_brown_round_shape)
-                    Log.d("월세 월세", price_min_m.toString() + " / " + price_max_m.toString())
                 }
                 else if (price_min_a != 0 && price_max_a != 0) {
                     binding.priceBt.setTextColor(Color.parseColor("#C69C6D"))
                     binding.priceBt.setBackgroundResource(R.drawable.select_brown_round_shape)
-                    Log.d("월세 관리비", price_min_a.toString() + " / " + price_max_a.toString())
                 }
                 else if (price_min_d != 0 && price_max_d != 0) {
                     binding.priceBt.setTextColor(Color.parseColor("#C69C6D"))
                     binding.priceBt.setBackgroundResource(R.drawable.select_brown_round_shape)
-                    Log.d("월세 보증금", price_min_d.toString() + " / " + price_max_d.toString())
                 } else {
                     binding.priceBt.setTextColor(Color.WHITE)
                     binding.priceBt.setBackgroundResource(R.drawable.brown_round_shape)
@@ -209,5 +202,23 @@ class MapFragment() : Fragment() {
                 binding.floorBt.setBackgroundResource(R.drawable.brown_round_shape)
             }
         }
+    }
+
+    private fun viewConvertToBitmap(): Bitmap {
+        val view = layoutInflater.inflate(R.layout.zoomout_marker_layout, null)
+        val displayMetrics = DisplayMetrics()
+        val location = view.findViewById<TextView>(R.id.location_tv)
+        val maxprice = view.findViewById<TextView>(R.id.max_price_tv)
+        val count = view.findViewById<TextView>(R.id.count_tv)
+        location.text = "회현동"
+        maxprice.text = "2억7천"
+        count.text = "7건"
+        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels)
+        view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
+        val bitmap = Bitmap.createBitmap(view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
     }
 }

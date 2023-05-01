@@ -1,4 +1,4 @@
-package com.example.capstonedesign2.ui
+package com.example.capstonedesign2.ui.detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,17 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.capstonedesign2.R
 import com.example.capstonedesign2.databinding.FragmentPublicBinding
-import com.example.capstonedesign2.databinding.FragmentReviewBinding
 
-class ReviewFragment() : Fragment() {
-    lateinit var binding: FragmentReviewBinding
+class PublicFragment() : Fragment() {
+    lateinit var binding: FragmentPublicBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentReviewBinding.inflate(inflater, container, false)
+        binding = FragmentPublicBinding.inflate(inflater, container, false)
 
 
         return binding.root

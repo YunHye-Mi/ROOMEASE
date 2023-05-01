@@ -11,6 +11,5 @@ data class Estate(
     var rent_area: Double? = 0.0,
     var rent_gtn: String? = "",
     var rent_fee: String? = "",
-    var flr_no: Int? = 0,
-    var isLike: Boolean = false
-        )
+    var flr_no: Int? = 0
+)

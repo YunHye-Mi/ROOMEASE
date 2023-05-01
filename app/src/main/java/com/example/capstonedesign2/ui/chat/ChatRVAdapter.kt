@@ -1,15 +1,13 @@
-package com.example.capstonedesign2.ui
+package com.example.capstonedesign2.ui.chat
 
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.capstonedesign2.R
 import com.example.capstonedesign2.data.entities.Estate
 import com.example.capstonedesign2.databinding.ItemResultBinding
 import java.util.ArrayList
 
-class ResultRVAdapter(private val estateList: ArrayList<Estate>) : RecyclerView.Adapter<ResultRVAdapter.ViewHolder>() {
+class ChatRVAdapter(private val estateList: ArrayList<Estate>) : RecyclerView.Adapter<ChatRVAdapter.ViewHolder>() {
 
     interface MyItemClickListner{
         fun onItemClick(estate: Estate)

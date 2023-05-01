@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.map.search.ResultActivity">
+    tools:context=".ui.MainActivity">
 
     <ImageView
         android:id="@+id/back_iv"
@@ -21,9 +21,9 @@
         android:id="@+id/search_tv"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="주소를 입력해주세요"
+        android:text="채팅 목록"
+        android:gravity="center"
         android:textAppearance="@style/result_top"
-        android:gravity="left|center_vertical"
         android:layout_marginTop="10dp"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="50dp"
@@ -39,30 +39,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Spinner
-        android:id="@+id/sort_spinner"
-        android:layout_width="120dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="30dp"
-        android:gravity="center"
-        android:entries="@array/sort_spinner"
-        android:labelFor="@id/sort_spinner"
-        android:pointerIcon="horizontal_double_arrow"
-        android:textAlignment="center"
-        android:spinnerMode="dropdown"
-        android:background="@drawable/round_shape"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/result_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="105dp"
+        android:layout_marginTop="65dp"
         android:layout_marginStart="35dp"
         android:layout_marginEnd="35dp"
-        tools:listitem="@layout/item_result"
+        tools:listitem="@layout/item_chatroom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>

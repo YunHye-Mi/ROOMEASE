@@ -1,10 +1,12 @@
 package com.example.capstonedesign2.ui
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.capstonedesign2.R
 import com.example.capstonedesign2.databinding.ActivityMainBinding
+import com.example.capstonedesign2.ui.like.LikeFragment
+import com.example.capstonedesign2.ui.map.MapFragment
+import com.example.capstonedesign2.ui.more.MoreFragment
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding : ActivityMainBinding
@@ -38,12 +40,12 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
 
-                R.id.recommendFragment -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, RecommendFragment())
-                        .commitAllowingStateLoss()
-                    return@setOnItemSelectedListener true
-                }
+//                R.id.recommendFragment -> {
+//                    supportFragmentManager.beginTransaction()
+//                        .replace(R.id.main_frm, RecommendFragment())
+//                        .commitAllowingStateLoss()
+//                    return@setOnItemSelectedListener true
+//                }
 
                 R.id.likeFragment -> {
                     supportFragmentManager.beginTransaction()

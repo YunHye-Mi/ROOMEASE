@@ -1,4 +1,4 @@
-package com.example.capstonedesign2.ui
+package com.example.capstonedesign2.ui.like
 
 import android.os.Bundle
 import android.view.LayoutInflater
