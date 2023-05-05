@@ -31,9 +31,6 @@
         </activity>
         <activity android:name=".ui.login.LoginActivity"
             android:exported="false"/>
-        <activity
-            android:name=".ui.MainActivity"
-            android:exported="false"/>
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
@@ -44,6 +41,11 @@
                     android:scheme="kakao534c304e8d235c4f010e28930e8b8b73"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.login.AddInfoActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="false"/>
         <activity
             android:name=".ui.detail.DetailActivity"
             android:exported="false"/>
@@ -54,6 +56,9 @@
             android:name=".ui.map.search.SearchActivity"
             android:exported="false"
             android:windowSoftInputMode="stateAlwaysVisible">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
         </activity>
         <activity android:name=".ui.map.FilterActivity"
             android:exported="false"/>

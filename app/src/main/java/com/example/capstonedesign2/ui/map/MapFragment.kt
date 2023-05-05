@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.capstonedesign2.R
+import com.example.capstonedesign2.data.entities.Address
 import com.example.capstonedesign2.databinding.FragmentMapBinding
 import com.example.capstonedesign2.ui.map.search.SearchActivity
 import net.daum.mf.map.api.MapPOIItem
@@ -20,6 +21,7 @@ import net.daum.mf.map.api.MapPoint
 
 class MapFragment() : Fragment() {
     lateinit var binding: FragmentMapBinding
+    private var addressList = ArrayList<Address>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,17 +32,18 @@ class MapFragment() : Fragment() {
 
         var currentPoint = MapPoint.mapPointWithGeoCoord(37.566352778, 126.977952778)
 
-        var mapMarker = MapPOIItem()
-        mapMarker.apply {
-            itemName = "zoom-out marker"
-            tag = 0
-            mapPoint = currentPoint
-            markerType = MapPOIItem.MarkerType.CustomImage
-            customImageBitmap = Bitmap.createBitmap(viewConvertToBitmap())
-            isShowCalloutBalloonOnTouch = false
+        addressList.apply {
+            add(Address("상도동", "서울특별시 동작구 상도동", 37.4987679,126.9440654))
+            add(Address("흑석동", "서울특별시 동작구 흑석동", 37.5055226,126.9623716))
+            add(Address("연희동", "서울특별시 서대문구 연희동", 37.5715546,126.930927))
+            add(Address("사당동", "서울특별시 동작구 사당동", 37.4856409,126.9723271))
+            add(Address("신대방동", "서울특별시 동작구 신대방동", 37.4926959,126.9171638))
+            add(Address("신당동", "서울특별시 중구 신당동", 37.5579703,127.0136667))
         }
 
-        binding.mapView.addPOIItem(mapMarker)
+        for (i in addressList) {
+            makeMarker(i)
+        }
 
         onClickListener()
 
@@ -204,13 +207,26 @@ class MapFragment() : Fragment() {
         }
     }
 
-    private fun viewConvertToBitmap(): Bitmap {
+    private fun makeMarker(address: Address) {
+        var mapMarker = MapPOIItem()
+        mapMarker.apply {
+            itemName = "zoom-out marker"
+            tag = 0
+            mapPoint = MapPoint.mapPointWithGeoCoord(address.latitude, address.longitude)
+            markerType = MapPOIItem.MarkerType.CustomImage
+            customImageBitmap = Bitmap.createBitmap(viewConvertToBitmap(address))
+            isShowCalloutBalloonOnTouch = false
+        }
+        binding.mapView.addPOIItem(mapMarker)
+    }
+
+    private fun viewConvertToBitmap(address: Address): Bitmap {
         val view = layoutInflater.inflate(R.layout.zoomout_marker_layout, null)
         val displayMetrics = DisplayMetrics()
         val location = view.findViewById<TextView>(R.id.location_tv)
         val maxprice = view.findViewById<TextView>(R.id.max_price_tv)
         val count = view.findViewById<TextView>(R.id.count_tv)
-        location.text = "회현동"
+        location.text = address.address
         maxprice.text = "2억7천"
         count.text = "7건"
         view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)

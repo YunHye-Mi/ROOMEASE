@@ -22,7 +22,7 @@ class ResultActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        binding.searchTv.text = intent.getStringExtra("search")
+        binding.searchTv.text = intent.getStringExtra("search_address")
 
         estateData.apply {
             add(Estate("집", "서울특별시 동작구 상도동", listOf(R.drawable.splash_image), "월세", 19.5, "2000", "50", 4))

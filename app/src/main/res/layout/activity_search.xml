@@ -28,11 +28,11 @@
         app:tint="@color/white" />
 
     <SearchView
-        android:id="@+id/search_tv"
+        android:id="@+id/search_sv"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginStart="50dp"
         android:background="@drawable/white_round_shape"
         android:fontFamily="@font/suit_medium"
@@ -45,6 +45,19 @@
         app:layout_constraintStart_toEndOf="@id/back_iv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="25dp"
+        android:text="취소"
+        android:textColor="@color/white"
+        android:fontFamily="@font/suit_medium"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/search_sv"/>
 
     <ImageView
         android:id="@+id/clear_text_iv"
@@ -67,6 +80,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:visibility="gone"
+        tools:listitem="@layout/item_search"
+        app:layout_constraintTop_toBottomOf="@id/view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

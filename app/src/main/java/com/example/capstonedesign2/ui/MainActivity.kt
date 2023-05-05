@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.capstonedesign2.R
 import com.example.capstonedesign2.databinding.ActivityMainBinding
+import com.example.capstonedesign2.ui.chat.ChatFragment
 import com.example.capstonedesign2.ui.like.LikeFragment
 import com.example.capstonedesign2.ui.map.MapFragment
 import com.example.capstonedesign2.ui.more.MoreFragment
@@ -36,6 +37,13 @@ class MainActivity : AppCompatActivity() {
                 R.id.mapFragment -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, MapFragment())
+                        .commitAllowingStateLoss()
+                    return@setOnItemSelectedListener true
+                }
+
+                R.id.chatFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, ChatFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
