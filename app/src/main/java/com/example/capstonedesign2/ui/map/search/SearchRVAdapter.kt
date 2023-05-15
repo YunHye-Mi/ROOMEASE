@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.capstonedesign2.data.entities.Address
-import com.example.capstonedesign2.data.entities.Estate
-import com.example.capstonedesign2.databinding.ItemResultBinding
 import com.example.capstonedesign2.databinding.ItemSearchBinding
 import java.util.ArrayList
 

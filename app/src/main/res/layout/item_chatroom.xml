@@ -29,17 +29,18 @@
         app:layout_constraintStart_toEndOf="@id/room_cv"
         app:layout_constraintTop_toTopOf="parent">
         <TextView
-            android:id="@+id/building_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_marginBottom="20dp"
-            android:text="매물명"
-            android:textAppearance="@style/chatroom_text"/>
-        <TextView
             android:id="@+id/intermediary_tv"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
+            android:layout_marginBottom="20dp"
             android:text="중개사 이름"
+            android:textAppearance="@style/chatroom_text"/>
+        <TextView
+            android:id="@+id/current_chat_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="매물 주소"
+            android:textColor="#BBBBBB"
             android:textAppearance="@style/chatroom_text"/>
     </LinearLayout>
 

@@ -6,8 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:src="@drawable/partion3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -16,8 +16,8 @@
         android:id="@+id/location_tv"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="34dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
         android:text="상도1동"
         android:textAlignment="center"
         android:textAppearance="@style/map_marker"
@@ -26,12 +26,13 @@
 
     <TextView
         android:id="@+id/max_price_tv"
-        android:layout_width="68dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8.7dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="70dp"
         android:text="2억7천"
         android:textAlignment="center"
+        android:textSize="14sp"
         android:textAppearance="@style/map_marker"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,9 +41,10 @@
         android:id="@+id/count_tv"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="82dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginStart="61dp"
+        android:layout_marginTop="70dp"
         android:text="건"
+        android:textSize="14sp"
         android:textAlignment="center"
         android:textAppearance="@style/map_marker"
         app:layout_constraintStart_toStartOf="parent"

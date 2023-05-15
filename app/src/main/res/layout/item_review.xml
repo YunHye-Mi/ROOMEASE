@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -11,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="30dp"
-        android:paddingVertical="10dp"
+        android:paddingVertical="15dp"
         android:background="@color/gray"
         app:layout_constraintTop_toTopOf="parent">
         <TextView
@@ -19,18 +18,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="유저닉네임"
+            android:fontFamily="@font/suit_bold"
             android:textAppearance="@style/review_text"/>
+        <TextView
+            android:id="@+id/period_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="n년 이내 거주"
+            android:textAppearance="@style/review_text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/view_ll">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:paddingTop="10dp"
+            android:paddingHorizontal="30dp"
             android:gravity="center_vertical">
             <TextView
-                android:id="@+id/period_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="거주기간"
+                android:text="평점"
                 android:textSize="14sp"
+                android:textColor="@color/orange"
                 android:textAppearance="@style/review_text"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -52,16 +67,19 @@
                 android:textSize="14sp"
                 android:textAppearance="@style/review_text"/>
         </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/content_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="30dp"
+            android:text="리뷰 내용"
+            android:textSize="14sp"
+            android:textAppearance="@style/review_text"
+            app:layout_constraintTop_toBottomOf="@id/view_ll"/>
+
     </LinearLayout>
-    <TextView
-        android:id="@+id/content_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:paddingHorizontal="30dp"
-        android:text="리뷰 내용"
-        android:textSize="14sp"
-        android:textAppearance="@style/review_text"
-        app:layout_constraintTop_toBottomOf="@id/view_ll"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

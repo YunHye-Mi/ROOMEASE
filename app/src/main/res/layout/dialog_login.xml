@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="20dp"
+    android:paddingHorizontal="20dp"
+    android:gravity="center">
+    <TextView
+        android:id="@+id/dg_intermediary_tv"
+        android:layout_width="300dp"
+        android:layout_height="65dp"
+        android:text="공인중개사"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/suit_medium"
+        android:background="@drawable/brown_round_shape"/>
+    <TextView
+        android:id="@+id/dg_customer_tv"
+        android:layout_width="300dp"
+        android:layout_height="65dp"
+        android:text="일반"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/suit_medium"
+        android:background="@drawable/brown_round_shape"/>
+</LinearLayout>

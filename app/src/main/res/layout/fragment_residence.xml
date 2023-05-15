@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="20dp"
-    android:layout_marginTop="20dp"
+    android:layout_marginVertical="40dp"
     android:layout_marginEnd="20dp"
     android:orientation="vertical"
     android:rowCount="3"
@@ -13,114 +13,72 @@
     tools:context=".ui.MainActivity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/near_cafe"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginBottom="20dp"
         android:gravity="center">
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginStart="20dp"
             android:src="@drawable/outline_local_cafe_24"/>
         <TextView
-            android:layout_width="100dp"
+            android:id="@+id/near_cafe_tv"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:text="N분"
+            android:text="주변 5km 안에 n개 존재"
             android:textAlignment="center"
+            android:textSize="20dp"
             android:textAppearance="@style/tabview_text"/>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/near_hospital"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginVertical="20dp"
         android:gravity="center">
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/outline_local_cafe_24"/>
+            android:layout_marginStart="20dp"
+            android:src="@drawable/baseline_local_police_24"/>
         <TextView
-            android:layout_width="100dp"
+            android:id="@+id/police_tv"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:text="N분"
+            android:text="주변 5km 안에 n개 존재"
             android:textAlignment="center"
+            android:textSize="20dp"
             android:textAppearance="@style/tabview_text"/>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/near_restaurant"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginVertical="20dp"
         android:gravity="center">
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginStart="20dp"
             android:src="@drawable/outline_local_cafe_24"/>
         <TextView
-            android:layout_width="100dp"
+            android:id="@+id/near_restaurant_tv"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:text="N분"
+            android:text="주변 5km 안에 n개 존재"
+            android:textSize="20dp"
             android:textAlignment="center"
             android:textAppearance="@style/tabview_text"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="10dp"
-        android:gravity="center">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/outline_local_cafe_24"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="N분"
-            android:textAlignment="center"
-            android:textAppearance="@style/tabview_text"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="10dp"
-        android:gravity="center">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/outline_local_cafe_24"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="N분"
-            android:textAlignment="center"
-            android:textAppearance="@style/tabview_text"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="10dp"
-        android:gravity="center">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/outline_local_cafe_24"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="N분"
-            android:textAlignment="center"
-            android:textAppearance="@style/tabview_text"/>
-    </LinearLayout>
-
-</GridLayout>
+</LinearLayout>

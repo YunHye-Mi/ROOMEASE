@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="right"
+    android:layout_marginTop="20dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginEnd="10dp"
+        android:textColor="@color/black"
+        android:text="오전 10:30"
+        android:textSize="12sp"
+        android:textAppearance="@style/review_text"/>
+
+    <TextView
+        android:id="@+id/message_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:gravity="center_vertical|start"
+        android:paddingHorizontal="20dp"
+        android:textColor="@color/white"
+        android:text="안녕하세요."
+        android:textSize="14sp"
+        android:background="@drawable/msg_brown_round_shape"
+        android:textAppearance="@style/review_text"/>
+
+</LinearLayout>

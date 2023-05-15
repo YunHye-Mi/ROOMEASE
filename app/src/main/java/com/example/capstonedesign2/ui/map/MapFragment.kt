@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,15 +14,20 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.capstonedesign2.R
+import com.example.capstonedesign2.data.local.EstateDatabase
 import com.example.capstonedesign2.data.entities.Address
+import com.example.capstonedesign2.data.entities.Estate
 import com.example.capstonedesign2.databinding.FragmentMapBinding
 import com.example.capstonedesign2.ui.map.search.SearchActivity
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
+import net.daum.mf.map.api.MapView
+import net.daum.mf.map.api.MapView.MapType
 
 class MapFragment() : Fragment() {
     lateinit var binding: FragmentMapBinding
-    private var addressList = ArrayList<Address>()
+    lateinit var estateDB: EstateDatabase
+    var markerList = ArrayList<MapPOIItem>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,29 +36,93 @@ class MapFragment() : Fragment() {
     ): View? {
         binding = FragmentMapBinding.inflate(inflater, container, false)
 
-        var currentPoint = MapPoint.mapPointWithGeoCoord(37.566352778, 126.977952778)
+        estateDB = EstateDatabase.getInstance(this.requireContext())!!
 
-        addressList.apply {
-            add(Address("상도동", "서울특별시 동작구 상도동", 37.4987679,126.9440654))
-            add(Address("흑석동", "서울특별시 동작구 흑석동", 37.5055226,126.9623716))
-            add(Address("연희동", "서울특별시 서대문구 연희동", 37.5715546,126.930927))
-            add(Address("사당동", "서울특별시 동작구 사당동", 37.4856409,126.9723271))
-            add(Address("신대방동", "서울특별시 동작구 신대방동", 37.4926959,126.9171638))
-            add(Address("신당동", "서울특별시 중구 신당동", 37.5579703,127.0136667))
-        }
+        var mapPoint = MapPoint.mapPointWithGeoCoord(37.566352778, 126.977952778)
 
-        for (i in addressList) {
-            makeMarker(i)
-        }
+        initAddress()
+
+        binding.mapView.setMapViewEventListener(object : MapView.MapViewEventListener {
+            override fun onMapViewInitialized(p0: MapView?) {
+                p0!!.mapType = MapType.Satellite
+                p0!!.setMapCenterPointAndZoomLevel(mapPoint, 4,true)
+                for (i in estateDB.addressDao().getAddresses() as ArrayList<Address>) {
+                    p0.addPOIItem(makeZoomOutMarker(i))
+                }
+            }
+
+            override fun onMapViewCenterPointMoved(p0: MapView?, p1: MapPoint?) {
+                p0?.removeAllPOIItems()
+                for (i in estateDB.addressDao().getAddresses() as ArrayList<Address>) {
+                    val latitude = i.latitude
+                    val longitude = i.longitude
+                    p0?.addPOIItem(makeZoomOutMarker(i))
+                }
+            }
+
+            override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {
+                p0?.removeAllPOIItems()
+                val currentZoomLevel = p0?.zoomLevel ?: 0
+                if (currentZoomLevel in 3..6) {
+                    for (i in estateDB.addressDao().getAddresses() as ArrayList<Address>) {
+                        p0!!.addPOIItem(makeZoomOutMarker(i))
+                    }
+                }
+                else if (currentZoomLevel in 1..3) {
+                    for (i in estateDB.estateDao().getEstates() as ArrayList<Estate>) {
+                        p0!!.addPOIItem(makeZoomInMarker(i))
+                    }
+                }
+
+                Log.d("ZoomChange", p0!!.zoomLevel.toString())
+            }
+
+            override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
+
+            }
+
+            override fun onMapViewDoubleTapped(p0: MapView?, p1: MapPoint?) {
+
+            }
+
+            override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
+
+            }
+
+            override fun onMapViewDragStarted(p0: MapView?, p1: MapPoint?) {
+
+            }
+
+            override fun onMapViewDragEnded(p0: MapView?, p1: MapPoint?) {
+                p0?.setMapCenterPoint(p1, true)
+            }
+
+            override fun onMapViewMoveFinished(p0: MapView?, p1: MapPoint?) {
+
+            }
+        })
 
         onClickListener()
 
         return binding.root
     }
 
+    private fun initAddress() {
+
+        estateDB.addressDao().insert(Address("상도동", "서울특별시 동작구 상도동", 37.4987679,126.9440654))
+        estateDB.addressDao().insert(Address("흑석동", "서울특별시 동작구 흑석동", 37.5055226,126.9623716))
+        estateDB.addressDao().insert(Address("연희동", "서울특별시 서대문구 연희동", 37.5715546,126.930927))
+        estateDB.addressDao().insert(Address("사당동", "서울특별시 동작구 사당동", 37.4856409,126.9723271))
+        estateDB.addressDao().insert(Address("신대방동", "서울특별시 동작구 신대방동", 37.4926959,126.9171638))
+        estateDB.addressDao().insert(Address("신당동", "서울특별시 중구 신당동", 37.5579703,127.0136667))
+
+        estateDB.estateDao().insert(Estate("0", "2000", "서울특별시 서대문구 연희동", "4", "", "50", "8", "", "월세", "19.5"),)
+        estateDB.estateDao().insert(Estate("1", "4000", "서울특별시 동작구 상도동", "2", "", "48", "9", "", "월세", "21.5"),)
+
+    }
+
     override fun onResume() {
         super.onResume()
-
         setFilter()
     }
 
@@ -94,36 +164,244 @@ class MapFragment() : Fragment() {
             }
         }
 
+        var infra_subway = false
+        var infra_bus = false
+        var infra_bicycle = false
+        var infra_restaurant = false
+        var infra_cafe = false
+        var infra_store = false
+        var infra_convenience = false
+        var infra_fitness =false
+
         binding.subwayBt.setOnClickListener {
-            binding.infraList.visibility = View.GONE
+            if (infra_subway == false) {
+                markerList.addAll(binding.mapView.poiItems)
+                binding.mapView.removeAllPOIItems()
+                binding.infraList.visibility = View.GONE
+                var marker = MapPOIItem()
+                marker.apply {
+                    itemName = "지하철"
+                    mapPoint = binding.mapView.mapCenterPoint
+                    markerType = MapPOIItem.MarkerType.YellowPin
+                    tag = 0
+                    isShowCalloutBalloonOnTouch = false
+                }
+                binding.mapView.addPOIItem(marker)
+                infra_subway = true
+                infra_click = false
+            } else if (infra_subway == true) {
+                binding.mapView.removeAllPOIItems()
+                for (i in markerList) {
+                    binding.mapView.addPOIItem(i)
+                }
+                markerList.clear()
+                binding.infraList.visibility = View.GONE
+                infra_subway = false
+                infra_click = false
+            }
+            Log.d("infra_subway", infra_subway.toString())
         }
 
         binding.busBt.setOnClickListener {
-            binding.infraList.visibility = View.GONE
+            if (infra_bus == false) {
+                markerList.addAll(binding.mapView.poiItems)
+                binding.mapView.removeAllPOIItems()
+                binding.infraList.visibility = View.GONE
+                var marker = MapPOIItem()
+                marker.apply {
+                    itemName = "버스"
+                    mapPoint = binding.mapView.mapCenterPoint
+                    markerType = MapPOIItem.MarkerType.YellowPin
+                    tag = 0
+                    isShowCalloutBalloonOnTouch = false
+                }
+                binding.mapView.addPOIItem(marker)
+                infra_bus = true
+                infra_click = false
+            } else if (infra_bus == true) {
+                binding.mapView.removeAllPOIItems()
+                for (i in markerList) {
+                    binding.mapView.addPOIItem(i)
+                }
+                markerList.clear()
+                binding.infraList.visibility = View.GONE
+                infra_bus = false
+                infra_click = false
+            }
+            Log.d("infra_bus", infra_bus.toString())
         }
 
         binding.bicycleBt.setOnClickListener {
-            binding.infraList.visibility = View.GONE
+            if (infra_bicycle == false) {
+                markerList.addAll(binding.mapView.poiItems)
+                binding.mapView.removeAllPOIItems()
+                binding.infraList.visibility = View.GONE
+                var marker = MapPOIItem()
+                marker.apply {
+                    itemName = "자전거"
+                    mapPoint = binding.mapView.mapCenterPoint
+                    markerType = MapPOIItem.MarkerType.YellowPin
+                    tag = 0
+                    isShowCalloutBalloonOnTouch = false
+                }
+                binding.mapView.addPOIItem(marker)
+                infra_bicycle = true
+                infra_click = false
+            } else if (infra_bicycle == true) {
+                binding.mapView.removeAllPOIItems()
+                for (i in markerList) {
+                    binding.mapView.addPOIItem(i)
+                }
+                markerList.clear()
+                binding.infraList.visibility = View.GONE
+                infra_bicycle = false
+                infra_click = false
+            }
+            Log.d("infra_bicycle", infra_bicycle.toString())
         }
 
         binding.restaurantBt.setOnClickListener {
-            binding.infraList.visibility = View.GONE
+            if (infra_restaurant == false) {
+                markerList.addAll(binding.mapView.poiItems)
+                binding.mapView.removeAllPOIItems()
+                binding.infraList.visibility = View.GONE
+                var marker = MapPOIItem()
+                marker.apply {
+                    itemName = "식당"
+                    mapPoint = binding.mapView.mapCenterPoint
+                    markerType = MapPOIItem.MarkerType.YellowPin
+                    tag = 0
+                    isShowCalloutBalloonOnTouch = false
+                }
+                binding.mapView.addPOIItem(marker)
+                infra_restaurant = true
+                infra_click = false
+            } else if (infra_restaurant == true) {
+                binding.mapView.removeAllPOIItems()
+                for (i in markerList) {
+                    binding.mapView.addPOIItem(i)
+                }
+                markerList.clear()
+                binding.infraList.visibility = View.GONE
+                infra_restaurant = false
+                infra_click = false
+            }
+            Log.d("infra_restaurant", infra_restaurant.toString())
         }
 
         binding.cafeBt.setOnClickListener {
-            binding.infraList.visibility = View.GONE
+            if (infra_cafe == false) {
+                markerList.addAll(binding.mapView.poiItems)
+                binding.mapView.removeAllPOIItems()
+                binding.infraList.visibility = View.GONE
+                var marker = MapPOIItem()
+                marker.apply {
+                    itemName = "카페"
+                    mapPoint = binding.mapView.mapCenterPoint
+                    markerType = MapPOIItem.MarkerType.YellowPin
+                    tag = 0
+                    isShowCalloutBalloonOnTouch = false
+                }
+                binding.mapView.addPOIItem(marker)
+                infra_cafe = true
+                infra_click = false
+            } else if (infra_cafe == true) {
+                binding.mapView.removeAllPOIItems()
+                for (i in markerList) {
+                    binding.mapView.addPOIItem(i)
+                }
+                markerList.clear()
+                binding.infraList.visibility = View.GONE
+                infra_cafe = false
+                infra_click = false
+            }
+            Log.d("infra_cafe", infra_cafe.toString())
         }
 
         binding.shoppingStreetBt.setOnClickListener {
-            binding.infraList.visibility = View.GONE
+            if (infra_store == false) {
+                markerList.addAll(binding.mapView.poiItems)
+                binding.mapView.removeAllPOIItems()
+                binding.infraList.visibility = View.GONE
+                var marker = MapPOIItem()
+                marker.apply {
+                    itemName = "가게"
+                    mapPoint = binding.mapView.mapCenterPoint
+                    markerType = MapPOIItem.MarkerType.YellowPin
+                    tag = 0
+                    isShowCalloutBalloonOnTouch = false
+                }
+                binding.mapView.addPOIItem(marker)
+                infra_store = true
+                infra_click = false
+            } else if (infra_store == true) {
+                binding.mapView.removeAllPOIItems()
+                for (i in markerList) {
+                    binding.mapView.addPOIItem(i)
+                }
+                markerList.clear()
+                binding.infraList.visibility = View.GONE
+                infra_store = false
+                infra_click = false
+            }
+            Log.d("infra_store", infra_store.toString())
         }
 
         binding.convenienceBt.setOnClickListener {
-            binding.infraList.visibility = View.GONE
+            if (infra_convenience == false) {
+                markerList.addAll(binding.mapView.poiItems)
+                binding.mapView.removeAllPOIItems()
+                binding.infraList.visibility = View.GONE
+                var marker = MapPOIItem()
+                marker.apply {
+                    itemName = "편의점"
+                    mapPoint = binding.mapView.mapCenterPoint
+                    markerType = MapPOIItem.MarkerType.YellowPin
+                    tag = 0
+                    isShowCalloutBalloonOnTouch = false
+                }
+                binding.mapView.addPOIItem(marker)
+                infra_convenience = true
+                infra_click = false
+            } else if (infra_convenience == true) {
+                binding.mapView.removeAllPOIItems()
+                for (i in markerList) {
+                    binding.mapView.addPOIItem(i)
+                }
+                markerList.clear()
+                binding.infraList.visibility = View.GONE
+                infra_convenience = false
+                infra_click = false
+            }
+            Log.d("infra_convenience", infra_convenience.toString())
         }
 
         binding.fitnessBt.setOnClickListener {
-            binding.infraList.visibility = View.GONE
+            if (infra_fitness == false) {
+                markerList.addAll(binding.mapView.poiItems)
+                binding.mapView.removeAllPOIItems()
+                binding.infraList.visibility = View.GONE
+                var marker = MapPOIItem()
+                marker.apply {
+                    itemName = "헬스장"
+                    mapPoint = binding.mapView.mapCenterPoint
+                    markerType = MapPOIItem.MarkerType.YellowPin
+                    tag = 0
+                    isShowCalloutBalloonOnTouch = false
+                }
+                binding.mapView.addPOIItem(marker)
+                infra_fitness = true
+                infra_click = false
+            } else if (infra_fitness == true) {
+                binding.mapView.removeAllPOIItems()
+                binding.infraList.visibility = View.GONE
+                infra_fitness = false
+                infra_click = false
+                for (i in markerList)
+                    binding.mapView.addPOIItem(i)
+                markerList.clear()
+            }
+            Log.d("infra_fitness", infra_fitness.toString())
         }
     }
 
@@ -207,34 +485,62 @@ class MapFragment() : Fragment() {
         }
     }
 
-    private fun makeMarker(address: Address) {
+    private fun makeZoomOutMarker(address: Address): MapPOIItem? {
         var mapMarker = MapPOIItem()
-        mapMarker.apply {
-            itemName = "zoom-out marker"
+        return mapMarker.apply {
+            itemName = address.detail.toString()
             tag = 0
             mapPoint = MapPoint.mapPointWithGeoCoord(address.latitude, address.longitude)
             markerType = MapPOIItem.MarkerType.CustomImage
-            customImageBitmap = Bitmap.createBitmap(viewConvertToBitmap(address))
+            customImageBitmap = Bitmap.createBitmap(viewConvertToBitmapZoomOut(address))
             isShowCalloutBalloonOnTouch = false
         }
-        binding.mapView.addPOIItem(mapMarker)
     }
 
-    private fun viewConvertToBitmap(address: Address): Bitmap {
-        val view = layoutInflater.inflate(R.layout.zoomout_marker_layout, null)
+    private fun makeZoomInMarker(estate: Estate): MapPOIItem? {
+        var mapMarker = MapPOIItem()
+        return mapMarker.apply {
+            itemName = estate.id.toString()
+            tag = estate.id.toInt()
+//            mapPoint = MapPoint.mapPointWithGeoCoord(estate.latitude, estate.longitude)
+            markerType = MapPOIItem.MarkerType.CustomImage
+            customImageBitmap = Bitmap.createBitmap(viewConvertToBitmapZoomIn(estate))
+            isShowCalloutBalloonOnTouch = false
+        }
+    }
+
+
+    private fun viewConvertToBitmapZoomIn(estate: Estate): Bitmap {
+        val zoom_in_view = layoutInflater.inflate(R.layout.zoomin_marker_layout, null)
         val displayMetrics = DisplayMetrics()
-        val location = view.findViewById<TextView>(R.id.location_tv)
-        val maxprice = view.findViewById<TextView>(R.id.max_price_tv)
-        val count = view.findViewById<TextView>(R.id.count_tv)
+        val area = zoom_in_view.findViewById<TextView>(R.id.zoom_in_area_tv)
+        val price = zoom_in_view.findViewById<TextView>(R.id.zoom_in_max_tv)
+        area.text = estate.size
+        price.text = estate.deposit
+        zoom_in_view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        zoom_in_view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels)
+        zoom_in_view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
+        val bitmap = Bitmap.createBitmap(zoom_in_view.measuredWidth, zoom_in_view.measuredHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        zoom_in_view.draw(canvas)
+        return bitmap
+    }
+
+    private fun viewConvertToBitmapZoomOut(address: Address): Bitmap {
+        val zoom_out_view = layoutInflater.inflate(R.layout.zoomout_marker_layout, null)
+        val displayMetrics = DisplayMetrics()
+        val location = zoom_out_view.findViewById<TextView>(R.id.location_tv)
+        val maxprice = zoom_out_view.findViewById<TextView>(R.id.max_price_tv)
+        val count = zoom_out_view.findViewById<TextView>(R.id.count_tv)
         location.text = address.address
         maxprice.text = "2억7천"
         count.text = "7건"
-        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels)
-        view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
-        val bitmap = Bitmap.createBitmap(view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888)
+        zoom_out_view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        zoom_out_view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels)
+        zoom_out_view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
+        val bitmap = Bitmap.createBitmap(zoom_out_view.measuredWidth, zoom_out_view.measuredHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        view.draw(canvas)
+        zoom_out_view.draw(canvas)
         return bitmap
     }
 }

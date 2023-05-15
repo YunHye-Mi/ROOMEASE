@@ -37,7 +37,7 @@
         android:background="@drawable/white_round_shape"
         android:fontFamily="@font/suit_medium"
         android:gravity="center_vertical"
-        android:focusable="false"
+        android:focusable="true"
         android:focusableInTouchMode="true"
         android:paddingStart="3dp"
         android:textColor="@color/black"
@@ -45,19 +45,6 @@
         app:layout_constraintStart_toEndOf="@id/back_iv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="23dp"
-        android:layout_marginEnd="25dp"
-        android:text="취소"
-        android:textColor="@color/white"
-        android:fontFamily="@font/suit_medium"
-        android:textSize="16sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/search_sv"/>
 
     <ImageView
         android:id="@+id/clear_text_iv"

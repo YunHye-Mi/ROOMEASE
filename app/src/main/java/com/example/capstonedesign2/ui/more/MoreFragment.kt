@@ -6,12 +6,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.capstonedesign2.R
+import com.example.capstonedesign2.data.entities.User
 import com.example.capstonedesign2.databinding.FragmentMoreBinding
 import com.example.capstonedesign2.ui.MainActivity
+import com.example.capstonedesign2.ui.MyReviewActivity
+import com.example.capstonedesign2.ui.login.GeneralActivity
+import com.example.capstonedesign2.ui.login.IntermediaryActivity
 import com.example.capstonedesign2.ui.login.LoginActivity
-import com.kakao.sdk.user.UserApi
+import com.google.gson.Gson
 import com.kakao.sdk.user.UserApiClient
 
 class MoreFragment() : Fragment() {
@@ -22,9 +26,41 @@ class MoreFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        var spfUser = activity?.getSharedPreferences("user", AppCompatActivity.MODE_PRIVATE)
+        var gson = Gson()
+        var user = gson.fromJson("user", User::class.java)
+        var role = user.role
+
         binding = FragmentMoreBinding.inflate(inflater, container, false)
 
-        binding.nicknameTv.text
+        binding.nicknameTv.text = user.nickname
+
+        if (role == "Intermediary") {
+            binding.registerIntermediary.visibility = View.GONE
+            binding.myreviewTv.visibility = View.GONE
+            binding.nicknameTv.isClickable = false
+        } else {
+            binding.registerIntermediary.visibility = View.VISIBLE
+            binding.myreviewTv.visibility = View.VISIBLE
+
+            binding.nicknameTv.setOnClickListener {
+                var intent = Intent(this.context, GeneralActivity::class.java)
+                intent.putExtra("setName", "setName")
+                startActivity(intent)
+            }
+
+            binding.registerIntermediary.setOnClickListener {
+                var intent = Intent(this.context, IntermediaryActivity::class.java)
+                intent.putExtra("IntermediaryRegister", "register")
+                startActivity(intent)
+            }
+
+            binding.myreviewTv.setOnClickListener {
+                var intent = Intent(this.context, MyReviewActivity::class.java)
+                startActivity(intent)
+            }
+        }
 
         binding.signOutTv.setOnClickListener {
             UserApiClient.instance.logout {
@@ -47,9 +83,9 @@ class MoreFragment() : Fragment() {
                     Log.i("Hello", "연결 끊기 성공. SDK에서 토큰 삭제 됨")
                 }
             }
-            (activity as MainActivity).finish()
+            (activity as MainActivity).finishAndRemoveTask()
         }
 
-        return inflater.inflate(R.layout.fragment_more, container, false)
+        return binding.root
     }
 }

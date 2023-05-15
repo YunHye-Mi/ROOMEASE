@@ -2,10 +2,10 @@ package com.example.capstonedesign2.data.entities
 
 import androidx.room.Entity
 
-@Entity(tableName = "reviewTable")
+
 data class Review(
     var user: String? = "",
-    var target: String? = "",
+    var estateId: Int,
     var write_date: Long,
     var period: String? = "",
     var age: String? = "",

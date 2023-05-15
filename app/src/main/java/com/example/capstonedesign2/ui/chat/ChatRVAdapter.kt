@@ -3,47 +3,41 @@ package com.example.capstonedesign2.ui.chat
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.capstonedesign2.data.entities.ChatRoom
 import com.example.capstonedesign2.data.entities.Estate
+import com.example.capstonedesign2.databinding.ItemChatroomBinding
 import com.example.capstonedesign2.databinding.ItemResultBinding
+import com.squareup.picasso.Picasso
 import java.util.ArrayList
 
-class ChatRVAdapter(private val estateList: ArrayList<Estate>) : RecyclerView.Adapter<ChatRVAdapter.ViewHolder>() {
+class ChatRVAdapter(private val roomList: ArrayList<ChatRoom>) : RecyclerView.Adapter<ChatRVAdapter.ViewHolder>() {
 
-    interface MyItemClickListner{
-        fun onItemClick(estate: Estate)
+    interface MyItemClickListener{
+        fun onItemClick(room: ChatRoom)
     }
 
-    private lateinit var mItemClickListener: MyItemClickListner
-    fun setMyItemClickListener(itemClickListener: MyItemClickListner){
+    private lateinit var mItemClickListener: MyItemClickListener
+    fun setMyItemClickListener(itemClickListener: MyItemClickListener){
         mItemClickListener = itemClickListener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var binding = ItemResultBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        var binding = ItemChatroomBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(estateList[position])
-        holder.itemView.setOnClickListener { mItemClickListener.onItemClick(estateList[position]) }
+        holder.bind(roomList[position])
+        holder.itemView.setOnClickListener { mItemClickListener.onItemClick(roomList[position]) }
     }
 
-    override fun getItemCount(): Int = estateList.size
+    override fun getItemCount(): Int = roomList.size
 
-    inner class ViewHolder(val binding: ItemResultBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(estate: Estate) {
-            if (estate.coverImgList != null) binding.roomIv.setImageResource(estate.coverImgList!![0])
-            binding.buildnameTv.text = estate.name
-            if (estate.rent_gbn.toString() == "전세") {
-                binding.rentGbnTv.text = "전세"
-                binding.rentPriceTv.text = estate.rent_gtn.toString() + "만원"
-            } else {
-                binding.rentGbnTv.text = "월세"
-                binding.rentPriceTv.text = estate.rent_gtn.toString() + "/" +  estate.rent_fee.toString() + "만원"
-            }
-            binding.rentAreaTv.text = estate.flr_no.toString() + "m\u00B2"
-            binding.flrNoTv.text = estate.flr_no.toString() + " 층"
+    inner class ViewHolder(val binding: ItemChatroomBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(room: ChatRoom) {
+            binding.intermediaryTv.text = room.receiver.nickname
+            binding.currentChatTv.text = room.messages.last().message
         }
     }
 }
