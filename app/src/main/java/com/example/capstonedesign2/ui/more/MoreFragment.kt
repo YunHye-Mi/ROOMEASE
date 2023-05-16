@@ -27,14 +27,15 @@ class MoreFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        var spfUser = activity?.getSharedPreferences("user", AppCompatActivity.MODE_PRIVATE)
+        var spfUser = activity?.getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
         var gson = Gson()
-        var user = gson.fromJson("user", User::class.java)
+        var userJson = spfUser?.getString("User", "")
+        var user = gson.fromJson(userJson, User::class.java)
         var role = user.role
 
         binding = FragmentMoreBinding.inflate(inflater, container, false)
 
-        binding.nicknameTv.text = user.nickname
+        binding.nicknameTv.text = "이름: " + user.nickname
 
         if (role == "Intermediary") {
             binding.registerIntermediary.visibility = View.GONE

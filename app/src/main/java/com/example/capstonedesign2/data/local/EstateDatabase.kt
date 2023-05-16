@@ -6,12 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.capstonedesign2.data.entities.*
 
-@Database(entities = [Address::class, Estate::class, Bookmark::class, User::class], version = 1)
+@Database(entities = [Address::class, Estate::class, User::class], version = 1)
 abstract class EstateDatabase: RoomDatabase() {
     abstract fun addressDao(): AddressDao
     abstract fun estateDao(): EstateDao
     abstract fun userDao(): UserDao
-    abstract fun bookmarkDao(): BookmarkDao
+    //abstract fun bookmarkDao(): BookmarkDao
 
     companion object{
         private var instance: EstateDatabase? = null
@@ -23,7 +23,7 @@ abstract class EstateDatabase: RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         EstateDatabase::class.java,
-                        "Estate-database"
+                        "Estate_database"
                     ).allowMainThreadQueries().build()
                 }
             }

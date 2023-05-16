@@ -26,14 +26,6 @@ class MainActivity : AppCompatActivity() {
 
         var user = intent.getStringExtra("user")
         initBottomNavigation(user.toString())
-
-        var spfUser = getSharedPreferences("user", MODE_PRIVATE)
-        var userEditor = spfUser.edit()
-        userEditor.apply {
-            putString("userRole",user)
-        }
-
-        userEditor.commit()
     }
 
     private fun initBottomNavigation(role: String) { //BottomNavigationView init

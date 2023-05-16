@@ -131,7 +131,6 @@
                 app:tabSelectedTextColor="@color/black"
                 app:tabTextColor="@color/white"
                 app:tabTextAppearance="@style/tabview_text"
-                app:tabIndicatorColor="@color/transparent"
                 app:tabBackground="@color/brown"
                 android:background="@color/primary"
                 app:layout_constraintTop_toBottomOf="@id/detail_ll"/>

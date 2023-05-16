@@ -81,5 +81,8 @@
         <activity
             android:name=".ui.MyReviewActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.detail.IntermediaryReviewActivity"
+            android:exported="false" />
     </application>
 </manifest>

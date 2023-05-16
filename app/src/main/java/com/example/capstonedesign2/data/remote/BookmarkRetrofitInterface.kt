@@ -14,5 +14,5 @@ interface BookmarkRetrofitInterface {
     fun addBookmark(@Header(value = "Authorization") authorization: String, @Path(value = "room_id") room_id: Int): Call<BookmarkResponse>
 
     @GET("/api/bookmark/list")
-    fun getBookmark(@Header(value = "Authorization") authorization: String,): Call<BookmarkResponse>
+    fun getBookmark(@Header(value = "Authorization") authorization: String): Call<BookmarkResponse>
 }

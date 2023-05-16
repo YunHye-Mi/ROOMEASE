@@ -9,14 +9,12 @@ import okio.ByteString
 class WebSocketListener: WebSocketListener() {
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
-    }
-
-    override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-        super.onMessage(webSocket, bytes)
+        Log.d("onOpen", response.message)
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
+        Log.d("sendMessage", text)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -26,6 +24,7 @@ class WebSocketListener: WebSocketListener() {
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
         super.onClosing(webSocket, code, reason)
+        webSocket.close(NORMAL_CLOSURE_STATUS, null)
     }
 
     companion object {

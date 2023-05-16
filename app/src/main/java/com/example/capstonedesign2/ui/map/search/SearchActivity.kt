@@ -14,6 +14,7 @@ import com.example.capstonedesign2.databinding.ActivitySearchBinding
 class SearchActivity : AppCompatActivity() {
     lateinit var binding : ActivitySearchBinding
     lateinit var estateDB : EstateDatabase
+    var filteredList =  ArrayList<Address>()
     var addressList = ArrayList<Address>()
     private lateinit var searchResultAdapter: SearchRVAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +42,7 @@ class SearchActivity : AppCompatActivity() {
                 // 검색어 변경 시 동작하는 코드 작성
                 if (newText.isNullOrEmpty()) {
                     binding.searchRv.visibility = View.GONE
+                    if (filteredList.isNotEmpty()) filteredList.clear()
                 } else {
                     filterList(newText)
                     binding.searchRv.visibility = View.VISIBLE
@@ -71,16 +73,13 @@ class SearchActivity : AppCompatActivity() {
 
     private fun filterList(query: String?) {
         if (query?.isNotEmpty() == true) {
-            val filteredList = ArrayList<Address>()
             for (i in estateDB.addressDao().getAddresses()) {
                 if (i.address.contains(query)) {
+                    filteredList.add(i)
                 }
-                filteredList.add(i)
             }
 
-            if (filteredList.isEmpty()) {
-
-            } else {
+            if (filteredList.isNotEmpty()) {
                 searchResultAdapter.setFilteredList(filteredList)
             }
         }

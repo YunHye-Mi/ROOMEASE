@@ -51,17 +51,6 @@ class GeneralActivity : AppCompatActivity(), RegisterView {
         // 유저에 등록하기 위해 access token과 access token을 갱신하기 위해 refresh token을 가져옴.
         val spf = getSharedPreferences("token", MODE_PRIVATE)
         access = spf.getString("access", "").toString()
-        val name = binding.nickEt.text.toString()
-        val user = User(0, access, name, null, "General")
-        val gson = Gson()
-        val userJson = gson.toJson(user)
-        val userSpf = getSharedPreferences("user", MODE_PRIVATE)
-        val editor = userSpf.edit()
-        editor.apply {
-            putString("user", userJson)
-        }
-
-        editor.commit()
 
         writeView()
     }
@@ -97,6 +86,17 @@ class GeneralActivity : AppCompatActivity(), RegisterView {
 //                    val authService = AuthService()
 //                    authService.setRegisterView(this)
 //                    authService.register(access, registerRequest)
+                        val name = binding.nickEt.text.toString()
+                        val user = User(0, access, name, null, "General")
+                        val gson = Gson()
+                        val userJson = gson.toJson(user)
+                        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+                        val editor = userSpf.edit()
+                        editor.apply {
+                            putString("User", userJson)
+                        }
+
+                        editor.commit()
 
                         var intent = Intent(this, MainActivity::class.java)
                         intent.putExtra("user", "General")

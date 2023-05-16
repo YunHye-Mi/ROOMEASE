@@ -9,7 +9,7 @@ data class Estate(
     var deposit: String, // 보증금
     var address: String, // 주소
     var floor: String, // 층수
-    var coverImg: String, // 이미지
+    var coverImg: String?, // 이미지
     var rent: String, // 월세 가격
     var manage_cost: String, // 관리비
     var service_type: String, //

@@ -47,11 +47,14 @@ class DetailActivity : AppCompatActivity() {
             customDialog.binding.dialogRateTv.text = "3.68"
         }
 
+        binding.bookmarkOnIv.setOnClickListener {
+            binding.bookmarkOffIv.visibility = View.VISIBLE
+            binding.bookmarkOnIv.visibility = View.GONE
+        }
+
         binding.bookmarkOffIv.setOnClickListener {
             binding.bookmarkOffIv.visibility = View.GONE
             binding.bookmarkOnIv.visibility = View.VISIBLE
-
-
         }
     }
 }

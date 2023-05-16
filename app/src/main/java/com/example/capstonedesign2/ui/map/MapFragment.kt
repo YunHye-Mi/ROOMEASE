@@ -116,8 +116,8 @@ class MapFragment() : Fragment() {
         estateDB.addressDao().insert(Address("신대방동", "서울특별시 동작구 신대방동", 37.4926959,126.9171638))
         estateDB.addressDao().insert(Address("신당동", "서울특별시 중구 신당동", 37.5579703,127.0136667))
 
-        estateDB.estateDao().insert(Estate("0", "2000", "서울특별시 서대문구 연희동", "4", "", "50", "8", "", "월세", "19.5"),)
-        estateDB.estateDao().insert(Estate("1", "4000", "서울특별시 동작구 상도동", "2", "", "48", "9", "", "월세", "21.5"),)
+        estateDB.estateDao().insert(Estate("0", "2000", "서울특별시 서대문구 연희동", "4", null, "50", "8", "", "월세", "19.5"),)
+        estateDB.estateDao().insert(Estate("1", "4000", "서울특별시 동작구 상도동", "2", null, "48", "9", "", "월세", "21.5"),)
 
     }
 

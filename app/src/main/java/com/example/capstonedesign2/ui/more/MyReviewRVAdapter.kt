@@ -20,10 +20,11 @@ class MyReviewRVAdapter(private val reviewList: ArrayList<Review>) : RecyclerVie
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(reviewList[position])
         holder.binding.deleteCb.setOnCheckedChangeListener { compoundButton, b ->
-            if (compoundButton.isChecked)
+            if (compoundButton.isChecked) {
                 checkedList.add(position)
-            else
+            } else {
                 checkedList.remove(position)
+            }
         }
     }
 
@@ -35,6 +36,7 @@ class MyReviewRVAdapter(private val reviewList: ArrayList<Review>) : RecyclerVie
             binding.myPeriodTv.text = review.period
             binding.rateTv.text = ((review.public_rate.toDouble() + review.ambient_rate.toDouble() + review.lived_rate.toDouble()) / 3.0 ).toDouble().toString()
             binding.contentTv.text = review.content
+            binding.deleteCb.isChecked = false
         }
     }
 }

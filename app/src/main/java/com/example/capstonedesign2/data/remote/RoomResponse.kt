@@ -1,12 +1,13 @@
 package com.example.capstonedesign2.data.remote
 
 import com.google.gson.annotations.SerializedName
+import java.util.Objects
 
 data class RoomResponse(
     @SerializedName("status") val  status: Int,
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
-    @SerializedName("data") val roomResult: RoomResult
+    @SerializedName("data") val objects: Objects?
 )
 
 data class MapResponse(

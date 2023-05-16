@@ -53,18 +53,6 @@ class IntermediaryActivity : AppCompatActivity() {
         val spf = getSharedPreferences("token", MODE_PRIVATE)
         access = spf.getString("access", "").toString()
 
-        val name = binding.nickEt.text.toString()
-        val user = User(1, access, name, "1234567890", "Intermediary")
-        val gson = Gson()
-        val userJson = gson.toJson(user)
-        val userSpf = getSharedPreferences("User", MODE_PRIVATE)
-        val editor = userSpf.edit()
-        editor.apply {
-            putString("user", userJson)
-        }
-
-        editor.commit()
-
         writeView()
     }
 
@@ -94,6 +82,19 @@ class IntermediaryActivity : AppCompatActivity() {
 
                     binding.startTv.setOnClickListener {
                         finish()
+
+                        val name = binding.nickEt.text.toString()
+                        val user = User(1, access, name, "1234567890", "Intermediary")
+                        val gson = Gson()
+                        val userJson = gson.toJson(user)
+                        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+                        val editor = userSpf.edit()
+                        editor.apply {
+                            putString("User", userJson)
+                        }
+
+                        editor.commit()
+
                         var intent = Intent(this, MainActivity::class.java)
                         intent.putExtra("user", "Intermediary")
                         startActivity(intent)
@@ -131,9 +132,5 @@ class IntermediaryActivity : AppCompatActivity() {
     private fun hideKeyBoard(){
         var inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-    }
-
-    private fun saveUser() {
-
     }
 }
