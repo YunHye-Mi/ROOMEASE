@@ -14,11 +14,13 @@
     <TextView
         android:id="@+id/zoom_in_area_tv"
         android:layout_width="70dp"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="19dp"
         android:text="34평"
         android:textAlignment="center"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="15sp"
         android:textAppearance="@style/map_marker"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

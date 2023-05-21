@@ -1,17 +1,16 @@
 package com.example.capstonedesign2.ui.chat
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.capstonedesign2.data.entities.ChatMessage
 import com.example.capstonedesign2.data.entities.User
+import com.example.capstonedesign2.data.remote.SubscribeChatResponse
 import com.example.capstonedesign2.databinding.ItemMessageMeBinding
 import com.example.capstonedesign2.databinding.ItemMessageOtherBinding
 import com.google.gson.Gson
 
-class MessageListAdapter(private val messageList: ArrayList<ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MessageListAdapter(private val messageList: ArrayList<SubscribeChatResponse>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val message_sent = 1
     private val message_received = 2
     lateinit var meBinding: ItemMessageMeBinding
@@ -44,7 +43,7 @@ class MessageListAdapter(private val messageList: ArrayList<ChatMessage>) : Recy
         var chatMessage = messageList[position]
         var gson = Gson()
         var user = gson.fromJson("currentUser", User::class.java)
-        if (chatMessage.sender.id == user.id) {
+        if (chatMessage.sessionId == user.id) {
             return message_sent
         } else {
             return message_received
@@ -55,11 +54,11 @@ class MessageListAdapter(private val messageList: ArrayList<ChatMessage>) : Recy
 
         lateinit var binding : ItemMessageOtherBinding
 
-        fun bind(chatMessage: ChatMessage) {
+        fun bind(chatMessage: SubscribeChatResponse) {
             super.itemView
 
-            binding.messageTv.text = chatMessage.message
-            binding.timeTv.text = chatMessage.timeStamp.toString()
+            binding.messageTv.text = chatMessage.content
+            binding.timeTv.text = chatMessage.timestamp.toString()
         }
     }
 
@@ -67,11 +66,11 @@ class MessageListAdapter(private val messageList: ArrayList<ChatMessage>) : Recy
 
         lateinit var binding : ItemMessageMeBinding
 
-        fun bind(chatMessage: ChatMessage) {
+        fun bind(chatMessage: SubscribeChatResponse) {
             super.itemView
 
-            binding.messageTv.text = chatMessage.message
-            binding.timeTv.text = chatMessage.timeStamp.toString()
+            binding.messageTv.text = chatMessage.content
+            binding.timeTv.text = chatMessage.timestamp.toString()
         }
     }
 }

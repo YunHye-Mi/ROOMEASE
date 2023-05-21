@@ -10,6 +10,9 @@ interface AuthRetrofitInterface {
     @POST("/api/auth/login")
     fun login(@Body authRequest: AuthRequest): Call<AuthResponse>
 
+    @POST
+    fun refresh(@Header("Authorization") authorization: String, @Body refreshRequest: RefreshRequest): Call<AuthResponse>
+
     @POST("/api/auth/registor")
     fun register(@Header(value = "Authorization") authorization: String, @Body registerRequest: RegisterRequest): Call<RegisterResponse>
 

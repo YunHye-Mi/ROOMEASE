@@ -84,5 +84,8 @@
         <activity
             android:name=".ui.detail.IntermediaryReviewActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.chat.ReminderActivity"
+            android:exported="false" />
     </application>
 </manifest>

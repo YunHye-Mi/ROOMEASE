@@ -2,14 +2,17 @@ package com.example.capstonedesign2.ui.detail
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.example.capstonedesign2.data.entities.Estate
+import com.example.capstonedesign2.data.remote.BookmarkListResponse
 import com.example.capstonedesign2.databinding.ActivityDetailBinding
+import com.example.capstonedesign2.ui.bookmark.BookmarkView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(), BookmarkView {
     lateinit var binding : ActivityDetailBinding
     private val information = arrayListOf("대중교통", "주변환경", "리뷰")
     private var gson = Gson()
@@ -23,8 +26,8 @@ class DetailActivity : AppCompatActivity() {
         var estate = gson.fromJson(estateJson, Estate::class.java)
 
         binding.addressTv.text = estate.address
-        binding.priceTv.text = estate.deposit + "만원 / " + estate.rent + "만원"
-        binding.manageTv.text = estate.manage_cost + "원"
+        binding.priceTv.text = estate.deposit.toString() + "만원 / " + estate.rent + "만원"
+        binding.manageTv.text = estate.manage_cost.toString() + "원"
         var imageUrl = estate.coverImg
         Picasso.get().load(imageUrl).into(binding.detailIv)
 
@@ -56,5 +59,21 @@ class DetailActivity : AppCompatActivity() {
             binding.bookmarkOffIv.visibility = View.GONE
             binding.bookmarkOnIv.visibility = View.VISIBLE
         }
+    }
+
+    override fun onBookmarkSuccess(code: Int, message: String) {
+        Log.d("BOOKMARK/SUCCESS", message)
+    }
+
+    override fun onBookmarkFailure(message: String) {
+        Log.d("BOOKMARK/FAILURE", message)
+    }
+
+    override fun onBMListSuccess(bookmarkListResponse: BookmarkListResponse) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onBMListFailure(message: String) {
+        TODO("Not yet implemented")
     }
 }

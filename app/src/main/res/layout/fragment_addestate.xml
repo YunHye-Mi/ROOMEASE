@@ -6,15 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-    <TextView
-        android:id="@+id/search_sv"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:gravity="center"
-        android:text="등록 매물"
-        android:textAppearance="@style/result_top"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/option_iv"
         android:layout_width="30dp"

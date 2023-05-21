@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.capstonedesign2.data.entities.Bookmark
 import com.example.capstonedesign2.databinding.ItemResultBinding
-import java.util.ArrayList
+import kotlin.collections.ArrayList
 
 class BookmarkRVAdapter(private val bookmarkList: ArrayList<Bookmark>) : RecyclerView.Adapter<BookmarkRVAdapter.ViewHolder>() {
 

@@ -3,31 +3,40 @@ package com.example.capstonedesign2.ui.map.search
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstonedesign2.R
-import com.example.capstonedesign2.data.local.EstateDatabase
-import com.example.capstonedesign2.data.entities.Estate
+import com.example.capstonedesign2.data.remote.ResultResponse
+import com.example.capstonedesign2.data.remote.SearchResponse
+import com.example.capstonedesign2.data.remote.SearchService
 import com.example.capstonedesign2.databinding.ActivityResultBinding
 import com.example.capstonedesign2.ui.detail.DetailActivity
 import com.google.gson.Gson
-import java.util.ArrayList
 
-class ResultActivity : AppCompatActivity() {
+class ResultActivity : AppCompatActivity(), ResultView {
     lateinit var binding : ActivityResultBinding
-    lateinit var estateDB: EstateDatabase
+    private var resultList = ArrayList<ResultResponse>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        estateDB = EstateDatabase.getInstance(this)!!
+        var dong = intent.getStringExtra("search_dong")
+        var full = intent.getStringExtra("search_full")
+
+        var searchService = SearchService()
+        searchService.setResultView(this)
+        if (full != null) {
+            searchService.getResultList(full, 100, 1)
+        }
 
         binding.backIv.setOnClickListener {
             onBackPressed()
         }
 
-        binding.searchTv.text = intent.getStringExtra("search_address")
+        binding.searchTv.text = dong
 
         val spinner = binding.sortSpinner
 
@@ -42,24 +51,55 @@ class ResultActivity : AppCompatActivity() {
             spinner.adapter = adapter
         }
 
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                // 선택된 항목에 따라 원하는 작업을 수행합니다.
+                when (position) {
+                    0 -> {
+                        if (full != null) {
+                            resultList.clear()
+                            searchService.getResultList(full, 100, 1)
+                        }
+                    }
+                    1 -> {
+                        if (full != null) {
+                            resultList.clear()
+                            searchService.getResultList(full, 100, 2)
+                        }
+                    }
+                    else -> {
+                        if (full != null) {
+                            resultList.clear()
+                            searchService.getResultList(full, 100, 3)
+                        }
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // 아무 항목도 선택되지 않았을 때의 동작을 설정합니다.
+            }
+        }
+
         initRV()
     }
 
     fun initRV() {
-        var detail = intent.getStringExtra("search_detail")
-        val resultRVAdapter = ResultRVAdapter(estateDB.estateDao().getEstate(detail!!) as ArrayList<Estate>)
+        val resultRVAdapter = ResultRVAdapter(resultList)
         var intent = Intent(this, DetailActivity::class.java)
 
         binding.resultRv.adapter = resultRVAdapter
         binding.resultRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         resultRVAdapter.setMyItemClickListener(object : ResultRVAdapter.MyItemClickListener {
-            override fun onItemClick(estate: Estate) {
-                val gson = Gson()
-                val estateJson = gson.toJson(estate)
-                intent.putExtra("estate", estateJson)
+            override fun onItemClick(resultResponse: ResultResponse) {
+                intent.putExtra("roomId", resultResponse.id)
                 startActivity(intent)
             }
         } )
+    }
+
+    override fun onResultSuccess(response: ResultResponse) {
+        resultList.add(response)
     }
 }

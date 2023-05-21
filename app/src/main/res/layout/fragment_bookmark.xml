@@ -7,7 +7,7 @@
     tools:context=".ui.MainActivity">
 
     <TextView
-        android:id="@+id/search_sv"
+        android:id="@+id/bookmark_tv"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:gravity="center"
@@ -25,26 +25,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Spinner
-        android:id="@+id/sort_spinner"
-        android:layout_width="120dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="75dp"
-        android:layout_marginEnd="30dp"
-        android:gravity="center"
-        android:entries="@array/sort_spinner"
-        android:labelFor="@id/sort_spinner"
-        android:pointerIcon="horizontal_double_arrow"
-        android:textAlignment="center"
-        android:spinnerMode="dropdown"
-        android:background="@drawable/round_shape"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bookmark_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="108dp"
+        android:layout_marginTop="68dp"
         tools:listitem="@layout/item_bookmark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="parent"

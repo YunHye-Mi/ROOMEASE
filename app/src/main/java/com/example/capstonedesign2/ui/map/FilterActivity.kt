@@ -64,25 +64,25 @@ class FilterActivity : AppCompatActivity() {
         binding.floorLl[0].setOnClickListener {
             binding.bottomTv.setTextColor(Color.parseColor("#754C24"))
             binding.groundTv.setTextColor(Color.BLACK)
-            binding.topTv.setTextColor(Color.BLACK)
+//            binding.topTv.setTextColor(Color.BLACK)
 
             floor = binding.bottomTv.text.toString()
         }
         binding.floorLl[1].setOnClickListener {
             binding.bottomTv.setTextColor(Color.BLACK)
             binding.groundTv.setTextColor(Color.parseColor("#754C24"))
-            binding.topTv.setTextColor(Color.BLACK)
+//            binding.topTv.setTextColor(Color.BLACK)
 
             floor = binding.groundTv.text.toString()
 
         }
-        binding.floorLl[2].setOnClickListener {
-            binding.bottomTv.setTextColor(Color.BLACK)
-            binding.groundTv.setTextColor(Color.BLACK)
-            binding.topTv.setTextColor(Color.parseColor("#754C24"))
-
-            floor = binding.topTv.text.toString()
-        }
+//        binding.floorLl[2].setOnClickListener {
+//            binding.bottomTv.setTextColor(Color.BLACK)
+//            binding.groundTv.setTextColor(Color.BLACK)
+//            binding.topTv.setTextColor(Color.parseColor("#754C24"))
+//
+//            floor = binding.topTv.text.toString()
+//        }
 
         val sharedPreferences = getSharedPreferences("filter", MODE_PRIVATE)
         binding.applyTv.setOnClickListener {
@@ -129,7 +129,7 @@ class FilterActivity : AppCompatActivity() {
             binding.charterTv.setTextColor(Color.BLACK)
             binding.bottomTv.setTextColor(Color.BLACK)
             binding.groundTv.setTextColor(Color.BLACK)
-            binding.topTv.setTextColor(Color.BLACK)
+//            binding.topTv.setTextColor(Color.BLACK)
             binding.minEt.text.clear()
             binding.maxEt.text.clear()
             binding.minDepositEt.text.clear()

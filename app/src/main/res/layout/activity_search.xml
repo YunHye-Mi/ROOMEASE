@@ -6,45 +6,41 @@
     android:layout_height="match_parent"
     tools:context=".ui.map.search.SearchActivity">
 
-    <View
+    <LinearLayout
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:background="@color/primary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/back_iv"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/outline_arrow_back_ios_24"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="5dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/white" />
-
-    <SearchView
-        android:id="@+id/search_sv"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
-        android:background="@drawable/white_round_shape"
-        android:fontFamily="@font/suit_medium"
         android:gravity="center_vertical"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:paddingStart="3dp"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@id/back_iv"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/back_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:layout_marginStart="10dp"
+            android:scaleType="centerCrop"
+            app:tint="@color/white" />
+
+        <SearchView
+            android:id="@+id/search_sv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/white_round_shape"
+            android:fontFamily="@font/suit_medium"
+            android:gravity="center_vertical"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:paddingStart="3dp"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
 
     <ImageView
         android:id="@+id/clear_text_iv"

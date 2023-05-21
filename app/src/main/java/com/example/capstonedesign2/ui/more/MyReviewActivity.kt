@@ -8,7 +8,6 @@ import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstonedesign2.R
 import com.example.capstonedesign2.data.entities.Review
-import com.example.capstonedesign2.data.local.EstateDatabase
 import com.example.capstonedesign2.databinding.ActivityMyreviewBinding
 import com.example.capstonedesign2.ui.detail.review.ReviewRVAdapter
 import com.example.capstonedesign2.ui.more.MyReviewRVAdapter
@@ -16,15 +15,12 @@ import java.util.ArrayList
 
 class MyReviewActivity : AppCompatActivity() {
     lateinit var binding : ActivityMyreviewBinding
-    lateinit var estateDB : EstateDatabase
     lateinit var reviewRVAdapter: MyReviewRVAdapter
     var reviewData = ArrayList<Review>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMyreviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        estateDB = EstateDatabase.getInstance(this)!!
 
         binding.backIv.setOnClickListener {
             onBackPressed()

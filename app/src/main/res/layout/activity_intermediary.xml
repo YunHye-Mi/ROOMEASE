@@ -80,13 +80,13 @@
             android:textSize="16sp"
             android:textColor="@color/black"
             android:lines="1"/>
-        <ImageView
-            android:id="@+id/search_iv"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginHorizontal="5dp"
-            android:src="@drawable/ic_outline_search_24"
-            app:tint="#666666" />
+<!--        <ImageView-->
+<!--            android:id="@+id/search_iv"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:layout_marginHorizontal="5dp"-->
+<!--            android:src="@drawable/ic_outline_search_24"-->
+<!--            app:tint="#666666" />-->
     </LinearLayout>
 
     <TextView

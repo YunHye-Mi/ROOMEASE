@@ -7,7 +7,7 @@ data class ChatResponse(
     @SerializedName("status") val  status: Int,
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
-    @SerializedName("data") val chatRoomResult: ChatRoomResult?
+    @SerializedName("data") val chatRoomResult: List<ChatRoomResult>?
 )
 
 data class ChatRequest(
@@ -23,8 +23,8 @@ data class ChatRoomResult(
 )
 
 data class SubscribeChatResponse(
-    @SerializedName("id") var id: Int,
     @SerializedName("sender") var sender: String,
+    @SerializedName("sessionId") var sessionId: Int,
     @SerializedName("content") var content: String,
     @SerializedName("timestamp") var timestamp: LocalDateTime,
     @SerializedName("chatRoomId") var chatRoomId: Int

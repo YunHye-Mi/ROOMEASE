@@ -1,8 +1,5 @@
 package com.example.capstonedesign2.data.entities
 
-import androidx.room.Entity
-
-
 data class Review(
     var user: String? = "",
     var estateId: Int,

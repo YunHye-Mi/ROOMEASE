@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import com.example.capstonedesign2.R
+import com.example.capstonedesign2.ui.chat.ChatActivity
 import com.example.capstonedesign2.ui.login.LoginActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -13,7 +14,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, ChatActivity::class.java)
             startActivity(intent)
             finish()
         }, 500)

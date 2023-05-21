@@ -1,10 +1,9 @@
 package com.example.capstonedesign2.data.entities
 
-import androidx.room.Entity
+import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "IntermediaryReviewTable")
 data class IntermediaryReview(
-    var userId : Int,
-    var intermediaryId : Int,
-    var rate : Double
+    @SerializedName("userId") var userId : Int,
+    @SerializedName("brokerId") var intermediaryId : Int,
+    @SerializedName("rate") var rate : Double
 )

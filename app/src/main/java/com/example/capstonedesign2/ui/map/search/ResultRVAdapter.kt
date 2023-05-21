@@ -3,15 +3,14 @@ package com.example.capstonedesign2.ui.map.search
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.capstonedesign2.data.entities.Estate
+import com.example.capstonedesign2.data.remote.ResultResponse
 import com.example.capstonedesign2.databinding.ItemResultBinding
 import com.squareup.picasso.Picasso
-import java.util.ArrayList
 
-class ResultRVAdapter(private val estateList: ArrayList<Estate>) : RecyclerView.Adapter<ResultRVAdapter.ViewHolder>() {
+class ResultRVAdapter(private val resultList: ArrayList<ResultResponse>) : RecyclerView.Adapter<ResultRVAdapter.ViewHolder>() {
 
     interface MyItemClickListener{
-        fun onItemClick(estate: Estate)
+        fun onItemClick(resultResponse: ResultResponse)
     }
 
     private lateinit var mItemClickListener: MyItemClickListener
@@ -26,27 +25,27 @@ class ResultRVAdapter(private val estateList: ArrayList<Estate>) : RecyclerView.
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(estateList[position])
-        holder.itemView.setOnClickListener { mItemClickListener.onItemClick(estateList[position]) }
+        holder.bind(resultList[position])
+        holder.itemView.setOnClickListener { mItemClickListener.onItemClick(resultList[position]) }
     }
 
-    override fun getItemCount(): Int = estateList.size
+    override fun getItemCount(): Int = resultList.size
 
     inner class ViewHolder(val binding: ItemResultBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(estate: Estate) {
-            if (estate.coverImg != null) {
-                var imageUrl = estate.coverImg
+        fun bind(resultResponse: ResultResponse) {
+            if (resultResponse.coverImg != null) {
+                var imageUrl = resultResponse.coverImg
                 Picasso.get().load(imageUrl).into(binding.roomIv)
             }
-            if (estate.sales_type == "전세") {
+            if (resultResponse.sales_type == "전세") {
                 binding.rentGbnTv.text = "전세"
-                binding.rentPriceTv.text = estate.deposit + "만원"
+                binding.rentPriceTv.text = resultResponse.deposit.toString() + "만원"
             } else {
                 binding.rentGbnTv.text = "월세"
-                binding.rentPriceTv.text = estate.deposit + "/" +  estate.rent + "만원"
+                binding.rentPriceTv.text = resultResponse.deposit.toString() + "/" +  resultResponse.rent + "만원"
             }
-            binding.rentAreaTv.text = estate.size + "m\u00B2"
-            binding.flrNoTv.text = estate.floor + " 층"
+            binding.rentAreaTv.text = resultResponse.size.toString() + "m\u00B2"
+            binding.flrNoTv.text = resultResponse.floor + " 층"
         }
     }
 }

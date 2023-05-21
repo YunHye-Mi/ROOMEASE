@@ -1,6 +1,5 @@
 package com.example.capstonedesign2.data.entities
 
-import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
 

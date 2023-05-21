@@ -3,26 +3,24 @@ package com.example.capstonedesign2.ui.map.search
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.capstonedesign2.data.local.EstateDatabase
-import com.example.capstonedesign2.data.entities.Address
+import com.example.capstonedesign2.data.remote.SearchResponse
+import com.example.capstonedesign2.data.remote.SearchService
 import com.example.capstonedesign2.databinding.ActivitySearchBinding
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity(), SearchTextView {
     lateinit var binding : ActivitySearchBinding
-    lateinit var estateDB : EstateDatabase
-    var filteredList =  ArrayList<Address>()
-    var addressList = ArrayList<Address>()
+    var filteredList =  ArrayList<SearchResponse>()
+    var addressList = ArrayList<SearchResponse>()
     private lateinit var searchResultAdapter: SearchRVAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        estateDB = EstateDatabase.getInstance(this)!!
 
         // 화면 시작 시 키보드를 올리고 searchview에 focus를 맞춤.
         binding.searchSv.isFocusable = true
@@ -40,9 +38,10 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 // 검색어 변경 시 동작하는 코드 작성
-                if (newText.isNullOrEmpty()) {
+                if (newText.toString().isNullOrEmpty()) {
+                    if (filteredList.isNotEmpty())
+                        filteredList.clear()
                     binding.searchRv.visibility = View.GONE
-                    if (filteredList.isNotEmpty()) filteredList.clear()
                 } else {
                     filterList(newText)
                     binding.searchRv.visibility = View.VISIBLE
@@ -59,9 +58,9 @@ class SearchActivity : AppCompatActivity() {
         var intent = Intent(this, ResultActivity::class.java)
 
         searchResultAdapter.setMyItemClickListener(object : SearchRVAdapter.MyItemClickListener {
-            override fun onItemClick(address: Address) {
-                intent.putExtra("search_address", address.address)
-                intent.putExtra("search_detail", address.detail)
+            override fun onItemClick(searchResponse: SearchResponse) {
+                intent.putExtra("search_dong", searchResponse.dong)
+                intent.putExtra("search_full", searchResponse.fullAddress)
                 startActivity(intent)
             }
         })
@@ -72,10 +71,16 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun filterList(query: String?) {
+        var searchService = SearchService()
+        searchService.setSearchView(this)
+
         if (query?.isNotEmpty() == true) {
-            for (i in estateDB.addressDao().getAddresses()) {
-                if (i.address.contains(query)) {
+            searchService.getKeyword(query)
+            for (i in addressList) {
+                if (i.dong.contains(query)) {
                     filteredList.add(i)
+                } else {
+                    filteredList.remove(i)
                 }
             }
 
@@ -83,5 +88,14 @@ class SearchActivity : AppCompatActivity() {
                 searchResultAdapter.setFilteredList(filteredList)
             }
         }
+    }
+
+    override fun onSearchSuccess(response: SearchResponse) {
+        if (!addressList.contains(response))
+            addressList.add(response)
+    }
+
+    override fun onSearchFailure(message: String) {
+        Log.d("Search/Failure", message)
     }
 }

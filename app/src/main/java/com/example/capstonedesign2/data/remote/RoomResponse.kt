@@ -10,16 +10,21 @@ data class RoomResponse(
     @SerializedName("data") val objects: Objects?
 )
 
-data class MapResponse(
-    @SerializedName("id") val id: String,
-    @SerializedName("lat") val lat: String,
-    @SerializedName("lng") val lng: String
+data class MapZoomOutResponse(
+    @SerializedName("ids") val ids: Array<String>,
+    @SerializedName("lat") val lat: Double,
+    @SerializedName("lng") val lng: Double,
+    @SerializedName("minprice") val minPrice: Double,
+    @SerializedName("dongname") val dongName: String,
+    @SerializedName("roomNum") val roomNum: Int
 )
 
-data class MapRequest(
-    @SerializedName("centerlat") val centerlat: String,
-    @SerializedName("centerlng") val centerlng: String,
-    @SerializedName("zoomlevel") val zoomlevel: Int
+data class MapZoomInResponse(
+    @SerializedName("id") val id: String,
+    @SerializedName("lat") val lat: Double,
+    @SerializedName("lng") val lng: Double,
+    @SerializedName("price") val price: Double,
+    @SerializedName("size") val size: Double
 )
 
 data class Address(

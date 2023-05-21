@@ -66,11 +66,10 @@ class LoginDialog(context: Context) : Dialog(context), LoginView {
             putString("access", accessToken)
         }
         editor.commit()
+        Log.d("LOGIN/SUCCESS", accessToken)
     }
 
     override fun onLoginFailure(code: Int, message: String) {
-        when (code) {
-
-        }
+        Log.d("LOGIN/FAILURE", message)
     }
 }

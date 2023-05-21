@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
@@ -13,18 +14,22 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.capstonedesign2.R
 import com.example.capstonedesign2.data.entities.User
+import com.example.capstonedesign2.data.remote.AuthService
+import com.example.capstonedesign2.data.remote.RegisterRequest
 import com.example.capstonedesign2.databinding.ActivityIntermediaryBinding
 import com.example.capstonedesign2.ui.MainActivity
 import com.google.gson.Gson
 
-class IntermediaryActivity : AppCompatActivity() {
+class IntermediaryActivity : AppCompatActivity(), RegisterView {
     lateinit var binding : ActivityIntermediaryBinding
-    var access = ""
-    var refresh = ""
+    private var authService = AuthService()
+    private var access = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityIntermediaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        authService.setRegisterView(this)
 
         // 화면이 시작되었을 때 닉네임 입력창에 포커스를 맞춰 키보드가 올라오도록 함.
         binding.nickEt.clearFocus()
@@ -45,8 +50,15 @@ class IntermediaryActivity : AppCompatActivity() {
             }
         }
 
-        binding.searchIv.setOnClickListener {
-
+        binding.intermediaryEt.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        binding.intermediaryEt.setOnEditorActionListener { view, i, event ->
+            if (event != null && (event.action == KeyEvent.KEYCODE_ENTER || i == EditorInfo.IME_ACTION_DONE)) {
+                val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(binding.nickEt.windowToken, 0)
+                true
+            } else {
+                false
+            }
         }
 
         // 유저에 등록하기 위해 access token과 access token을 갱신하기 위해 refresh token을 가져옴.
@@ -68,7 +80,6 @@ class IntermediaryActivity : AppCompatActivity() {
                     binding.startTv.setOnClickListener {
                         var intent = Intent(this, MainActivity::class.java)
                         intent.putExtra("user", "Intermediary")
-                        finish()
                         startActivity(intent)
                     }
                 } else {
@@ -84,7 +95,7 @@ class IntermediaryActivity : AppCompatActivity() {
                         finish()
 
                         val name = binding.nickEt.text.toString()
-                        val user = User(1, access, name, "1234567890", "Intermediary")
+                        val user = User(0, access, name, "1234567890", "Intermediary")
                         val gson = Gson()
                         val userJson = gson.toJson(user)
                         val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
@@ -95,6 +106,7 @@ class IntermediaryActivity : AppCompatActivity() {
 
                         editor.commit()
 
+                        //                        authService.register(access, RegisterRequest(binding.nickEt.text.toString(), binding.intermediaryEt.text.toString()))
                         var intent = Intent(this, MainActivity::class.java)
                         intent.putExtra("user", "Intermediary")
                         startActivity(intent)
@@ -111,10 +123,7 @@ class IntermediaryActivity : AppCompatActivity() {
     // edittext 이외 영역 클릭 시 키보드를 숨기도록 재정의
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         var view = currentFocus
-        if (view != null && (ev.action == MotionEvent.ACTION_UP || ev.action == MotionEvent.ACTION_MOVE) && view is EditText && !view.javaClass.name.startsWith(
-                "android.webkit."
-            )
-        ) {
+        if (view != null && (ev.action == MotionEvent.ACTION_UP || ev.action == MotionEvent.ACTION_MOVE) && view is EditText && !view.javaClass.name.startsWith("android.webkit.")) {
             var scrcoords = IntArray(2)
             view.getLocationOnScreen(scrcoords)
             val x = ev.rawX + view.getLeft() - scrcoords[0]
@@ -132,5 +141,17 @@ class IntermediaryActivity : AppCompatActivity() {
     private fun hideKeyBoard(){
         var inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+
+    override fun onRegisterSuccess(code: Int) {
+        Toast.makeText(this, "등록 완료", Toast.LENGTH_LONG)
+        var intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("user", "Intermediary")
+        finish()
+        startActivity(intent)
+    }
+
+    override fun onRegisterFailure(code: Int, message: String) {
+        Toast.makeText(this, "이름 또는 공인중개사 번호가 틀렸습니다.", Toast.LENGTH_LONG)
     }
 }

@@ -3,14 +3,14 @@ package com.example.capstonedesign2.ui.map.search
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.capstonedesign2.data.entities.Address
+import com.example.capstonedesign2.data.remote.SearchResponse
 import com.example.capstonedesign2.databinding.ItemSearchBinding
 import java.util.ArrayList
 
-class SearchRVAdapter(private var addressList: ArrayList<Address>) : RecyclerView.Adapter<SearchRVAdapter.ViewHolder>() {
+class SearchRVAdapter(private var addressList: ArrayList<SearchResponse>) : RecyclerView.Adapter<SearchRVAdapter.ViewHolder>() {
 
     interface MyItemClickListener{
-        fun onItemClick(address: Address)
+        fun onItemClick(searchResponse: SearchResponse)
     }
 
     private lateinit var mItemClickListener: MyItemClickListener
@@ -18,7 +18,7 @@ class SearchRVAdapter(private var addressList: ArrayList<Address>) : RecyclerVie
         mItemClickListener = itemClickListener
     }
 
-    fun setFilteredList(addressList: ArrayList<Address>) {
+    fun setFilteredList(addressList: ArrayList<SearchResponse>) {
         this.addressList = addressList
         notifyDataSetChanged()
     }
@@ -37,9 +37,9 @@ class SearchRVAdapter(private var addressList: ArrayList<Address>) : RecyclerVie
     override fun getItemCount(): Int = addressList.size
 
     inner class ViewHolder(val binding: ItemSearchBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(address: Address) {
-            binding.addressTv.text = address.address
-            binding.detailAddressTv.text = address.detail
+        fun bind(searchResponse: SearchResponse) {
+            binding.addressTv.text = searchResponse.dong
+            binding.detailAddressTv.text = searchResponse.fullAddress
         }
     }
 }

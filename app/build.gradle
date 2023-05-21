@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.capstonedesign2"
-        minSdk 24
+        minSdk 28
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -40,9 +40,9 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
@@ -56,9 +56,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
     //RoomDB
-    implementation 'androidx.room:room-ktx:2.5.1'
-    implementation 'androidx.room:room-runtime:2.5.1'
-    kapt 'androidx.room:room-compiler:2.5.1'
+//    implementation 'androidx.room:room-ktx:2.5.1'
+//    implementation 'androidx.room:room-runtime:2.5.1'
+//    kapt 'androidx.room:room-compiler:2.5.1'
 
     //Retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
@@ -73,6 +73,9 @@ dependencies {
     implementation "com.kakao.sdk:v2-all:2.13.0"
     implementation files('libs/libDaumMapAndroid.jar')
     implementation files('libs/libDaumMapEngineApi.jar')
+    implementation 'com.android.car.ui:car-ui-lib:2.4.0'
+
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

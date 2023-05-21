@@ -2,14 +2,17 @@ package com.example.capstonedesign2.data.remote
 
 import android.util.Log
 import com.example.capstonedesign2.ui.login.LoginView
+import com.example.capstonedesign2.ui.login.RefreshView
 import com.example.capstonedesign2.ui.login.RegisterView
 import com.example.capstonedesign2.utils.getRetrofit
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 
 class AuthService() {
     private lateinit var loginView: LoginView
     private lateinit var registerView: RegisterView
+    private lateinit var refreshView: RefreshView
 
     fun setLoginView(loginView: LoginView) {
         this.loginView = loginView
@@ -19,15 +22,18 @@ class AuthService() {
         this.registerView = registerView
     }
 
+    fun setRefreshView(refreshView: RefreshView) {
+        this.refreshView = refreshView
+    }
+
     fun login(authRequest: AuthRequest) {
         val authService = getRetrofit().create(AuthRetrofitInterface::class.java)
         authService.login(authRequest).enqueue(object : retrofit2.Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 Log.d("Login/SUCCESS", response.message().toString())
-                val resp: AuthResponse = response.body()!!
-                when (resp.status) {
-//                    1000 -> loginView.onLoginSuccess(resp.status, resp.accessToken)
-                    else -> loginView.onLoginFailure(resp.status, resp.message)
+                val resp: AuthResponse? = response.body()
+                if (resp != null) {
+                    loginView.onLoginSuccess(resp.status, resp.accessToken)
                 }
             }
 
@@ -38,16 +44,38 @@ class AuthService() {
         Log.d("Login", "Hello")
     }
 
+    fun refresh(authorization: String, refreshRequest: RefreshRequest) {
+        val authService = getRetrofit().create(AuthRetrofitInterface::class.java)
+        authService.refresh("Barer $authorization", refreshRequest).enqueue(object : Callback<AuthResponse> {
+            override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
+                if (response.isSuccessful) {
+                    var resp = response.body()
+                    if (resp != null) {
+                        Log.d("Refresh/SUCCESS", response.message().toString())
+                        refreshView.onRefreshSuccess(resp.status, resp.message)
+                        }
+                    }
+                }
+
+            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
+                Log.d("Refresh/Failure", t.message.toString())
+            }
+        })
+    }
+
     fun register(accessToken: String, registerRequest: RegisterRequest) {
         val authService = getRetrofit().create(AuthRetrofitInterface::class.java)
 
-        authService.register(accessToken, registerRequest).enqueue(object :
-            retrofit2.Callback<RegisterResponse> {
+        authService.register(accessToken, registerRequest).enqueue(object: Callback<RegisterResponse> {
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
-                Log.d("Register/SUCCESS", response.message().toString())
-                val resp: RegisterResponse = response.body()!!
-                when (resp.status) {
-                    else -> registerView.onRegisterFailure(resp.status, resp.message)
+                if (response.isSuccessful) {
+                    var resp: RegisterResponse? = response.body()
+                    if (resp != null) {
+                        Log.d("Register/SUCCESS", response.message().toString())
+                        registerView.onRegisterSuccess(resp.status)
+                    }
+                } else {
+                    registerView.onRegisterFailure(response.code(), response.message())
                 }
             }
 

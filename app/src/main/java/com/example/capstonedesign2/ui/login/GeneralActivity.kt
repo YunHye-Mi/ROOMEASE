@@ -21,7 +21,6 @@ import com.google.gson.Gson
 
 class GeneralActivity : AppCompatActivity(), RegisterView {
     lateinit var binding : ActivityGeneralBinding
-    private var gson = Gson()
     private var access = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,11 +80,6 @@ class GeneralActivity : AppCompatActivity(), RegisterView {
                     binding.startTv.setBackgroundColor(Color.parseColor("#FDC536"))
 
                     binding.startTv.setOnClickListener {
-//                    var name = binding.nickEt.text.toString()
-//                    val registerRequest = RegisterRequest(name, null)
-//                    val authService = AuthService()
-//                    authService.setRegisterView(this)
-//                    authService.register(access, registerRequest)
                         val name = binding.nickEt.text.toString()
                         val user = User(0, access, name, null, "General")
                         val gson = Gson()
@@ -97,6 +91,10 @@ class GeneralActivity : AppCompatActivity(), RegisterView {
                         }
 
                         editor.commit()
+
+//                        var authService = AuthService()
+//                        var registerRequest = RegisterRequest(name, null)
+//                        authService.register("Barer $access", registerRequest)
 
                         var intent = Intent(this, MainActivity::class.java)
                         intent.putExtra("user", "General")
@@ -118,10 +116,7 @@ class GeneralActivity : AppCompatActivity(), RegisterView {
     // edittext 이외 영역 클릭 시 키보드를 숨기도록 재정의
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         var view = currentFocus
-        if (view != null && (ev.action == MotionEvent.ACTION_UP || ev.action == MotionEvent.ACTION_MOVE) && view is EditText && !view.javaClass.name.startsWith(
-                "android.webkit."
-            )
-        ) {
+        if (view != null && (ev.action == MotionEvent.ACTION_UP || ev.action == MotionEvent.ACTION_MOVE) && view is EditText && !view.javaClass.name.startsWith("android.webkit.")) {
             var scrcoords = IntArray(2)
             view.getLocationOnScreen(scrcoords)
             val x = ev.rawX + view.getLeft() - scrcoords[0]

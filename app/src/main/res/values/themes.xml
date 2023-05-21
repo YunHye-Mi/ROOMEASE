@@ -14,6 +14,17 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="NumberPickerStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/suit_medium</item>
+        <item name="colorControlNormal">@color/primary</item>
+    </style>
+
+    <style name="DatePickerStyle"  parent="android:Widget.Material.Light.DatePicker">
+        <item name="android:datePickerDialogTheme">@color/primary</item>
+        <item name="android:fontFamily">@font/suit_regular</item>
+    </style>
+
 <!--  text appearance  -->
     <style name="main_button_text">
         <item name="android:textSize">15sp</item>
@@ -41,7 +52,7 @@
     </style>
 
     <style name="map_filter_button">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">#BBBBBB</item>
         <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">@font/suit_medium</item>
     </style>

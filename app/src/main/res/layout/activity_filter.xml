@@ -367,13 +367,13 @@
                     android:text="지상층"
                     android:textAppearance="@style/map_select_filter_text" />
 
-                <TextView
-                    android:id="@+id/top_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:text="옥탑"
-                    android:textAppearance="@style/map_select_filter_text" />
+<!--                <TextView-->
+<!--                    android:id="@+id/top_tv"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="30dp"-->
+<!--                    android:text="옥탑"-->
+<!--                    android:textAppearance="@style/map_select_filter_text" />-->
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
