@@ -14,18 +14,36 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.capstonedesign2.data.entities.User
 import com.example.capstonedesign2.data.remote.AuthService
+import com.example.capstonedesign2.data.remote.RefreshRequest
 import com.example.capstonedesign2.data.remote.RegisterRequest
 import com.example.capstonedesign2.databinding.ActivityGeneralBinding
 import com.example.capstonedesign2.ui.MainActivity
 import com.google.gson.Gson
 
-class GeneralActivity : AppCompatActivity(), RegisterView {
+class GeneralActivity : AppCompatActivity(), RegisterView, RefreshView {
     lateinit var binding : ActivityGeneralBinding
-    private var access = ""
+    private var accessToken = ""
+    private var refreshToken = ""
+    var authService = AuthService()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGeneralBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        authService.setRegisterView(this)
+        authService.setRefreshView(this)
+
+        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val userJson = userSpf.getString("User", "")
+        val gson = Gson()
+        val user = gson.fromJson(userJson, User::class.java)
+
+        if (user != null) {
+            if (user.accessToken != "" && user.refreshToken != "" && user.nickname.isNotEmpty()) {
+                var intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+        }
 
         // 화면이 시작되었을 때 닉네임 입력창에 포커스를 맞춰 키보드가 올라오도록 함.
         binding.nickEt.clearFocus()
@@ -48,8 +66,8 @@ class GeneralActivity : AppCompatActivity(), RegisterView {
 
 
         // 유저에 등록하기 위해 access token과 access token을 갱신하기 위해 refresh token을 가져옴.
-        val spf = getSharedPreferences("token", MODE_PRIVATE)
-        access = spf.getString("access", "").toString()
+        accessToken = intent.getStringExtra("accessToken").toString()
+        refreshToken = intent.getStringExtra("refreshToken").toString()
 
         writeView()
     }
@@ -80,26 +98,11 @@ class GeneralActivity : AppCompatActivity(), RegisterView {
                     binding.startTv.setBackgroundColor(Color.parseColor("#FDC536"))
 
                     binding.startTv.setOnClickListener {
-                        val name = binding.nickEt.text.toString()
-                        val user = User(0, access, name, null, "General")
-                        val gson = Gson()
-                        val userJson = gson.toJson(user)
-                        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
-                        val editor = userSpf.edit()
-                        editor.apply {
-                            putString("User", userJson)
-                        }
 
-                        editor.commit()
+                        var registerRequest = RegisterRequest(binding.nickEt.text.toString(), null)
+                        authService.register(accessToken, registerRequest)
 
-//                        var authService = AuthService()
-//                        var registerRequest = RegisterRequest(name, null)
-//                        authService.register("Barer $access", registerRequest)
-
-                        var intent = Intent(this, MainActivity::class.java)
-                        intent.putExtra("user", "General")
                         finish()
-                        startActivity(intent)
                     }
                 }
                 else {
@@ -135,11 +138,69 @@ class GeneralActivity : AppCompatActivity(), RegisterView {
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
-    override fun onRegisterSuccess(code: Int) {
+    override fun onRegisterSuccess(message: String, data: Boolean) {
        Toast.makeText(this, "등록 완료", Toast.LENGTH_LONG)
+        var intent = Intent(this, MainActivity::class.java)
+        finish()
+        val name = binding.nickEt.text.toString()
+        var role  = ""
+        role = if (data) {
+            "Broker"
+        } else {
+            "General"
+        }
+        val user = User(accessToken, refreshToken, name, null, role)
+        val gson = Gson()
+        val userJson = gson.toJson(user)
+        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val editor = userSpf.edit()
+        editor.apply {
+            putString("User", userJson)
+        }
+
+        startActivity(intent)
+
+        editor.commit()
+
+        Log.d("REGISTER/SUCCESS", "${user.nickname}/${user.role}/${user.accessToken}")
     }
 
     override fun onRegisterFailure(code: Int, message: String) {
-        Log.d("Register/Failure", message)
+        when (code) {
+            401 -> {
+                Log.d("Register/Failure", "$code/$message")
+                authService.refresh(accessToken, RefreshRequest(refreshToken))
+            }
+            403 -> Log.d("Register/Failure", "$code/$message")
+        }
+    }
+
+    override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
+        val updateUser = User(accessToken, refreshToken, binding.nickEt.text.toString(), null, "General")
+        val gson = Gson()
+        val userJson = gson.toJson(updateUser)
+        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val editor = userSpf.edit()
+        editor.apply {
+            putString("User", userJson)
+        }
+
+        startActivity(intent)
+
+        editor.commit()
+
+        authService.register(accessToken, RegisterRequest(binding.nickEt.text.toString(), null))
+
+        Log.d("ReRegister/Success", "${updateUser.nickname}/${updateUser.role}")
+    }
+
+    override fun onRefreshFailure(code: Int, message: String) {
+        when (code) {
+            401 -> {
+                Log.d("Refresh/Failure", "$code/$message")
+                authService.refresh(accessToken, RefreshRequest(refreshToken))
+            }
+            403 -> Log.d("Refresh/Failure", "$code/$message")
+        }
     }
 }

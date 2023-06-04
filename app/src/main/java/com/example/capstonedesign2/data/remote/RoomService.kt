@@ -1,9 +1,8 @@
 package com.example.capstonedesign2.data.remote
 
 import android.util.Log
-import com.example.capstonedesign2.data.entities.Estate
-import com.example.capstonedesign2.ui.map.MapView
-import com.example.capstonedesign2.ui.map.RoomView
+import com.example.capstonedesign2.ui.map.MapDataView
+import com.example.capstonedesign2.ui.detail.RoomView
 import com.example.capstonedesign2.utils.getRetrofit
 import com.example.capstonedesign2.utils.getRetrofit2
 import retrofit2.Call
@@ -12,25 +11,31 @@ import retrofit2.Response
 
 class RoomService() {
     private lateinit var roomView: RoomView
-    private lateinit var mapView: MapView
+    private lateinit var mapDataView: MapDataView
 
     fun setRoomView(roomView: RoomView) {
         this.roomView = roomView
     }
 
-    fun setMapView(mapView: MapView) {
-        this.mapView = mapView
+    fun setMapDataView(mapDataView: MapDataView) {
+        this.mapDataView = mapDataView
     }
 
     fun addRoom(authorization: String, roomId: Int) {
         var roomService = getRetrofit().create(RoomRetrofitInterface::class.java)
-        roomService.addRoom(authorization).enqueue(object : retrofit2.Callback<RoomResponse> {
+        roomService.addRoom("Bearer $authorization", roomId).enqueue(object : Callback<RoomResponse> {
             override fun onResponse(call: Call<RoomResponse>, response: Response<RoomResponse>) {
                 if (response.isSuccessful) {
                     var resp: RoomResponse? = response.body()
                     if (resp != null) {
-                        roomView.onAddRoomSuccess(resp.status)
-                        Log.d("ADDROOM/SUCCESS", resp.message)
+                        if (resp.success) {
+                            roomView.onAddRoomSuccess(resp.message)
+                        } else {
+                            when (resp.status) {
+                                401 -> roomView.onAddRoomFailure(resp.status, resp.message)
+                                403 -> roomView.onAddRoomFailure(resp.status, resp.message)
+                            }
+                        }
                     }
                 }
             }
@@ -42,71 +47,76 @@ class RoomService() {
     }
 
     fun getZoomOut(
-        centerlat: Double, centerlng: Double, minRent: Double?, maxRent: Double?, type: Int?,
-        minSize: Double?, maxSize: Double?, minDeposit: Int?, maxDeposit: Int?, minManage: Double?,
-        maxManage: Double?, lbLat: Double, lbLng: Double, rtLat: Double, rtLng: Double) {
+        lbLat: Double, lbLng: Double, rtLat: Double,
+        rtLng: Double, zoomin: Int, minRent: Double, maxRent: Double, type: Int, minSize: Double, maxSize: Double,
+        minDeposit: Int, maxDeposit: Int, minManage: Double, maxManage: Double, minFloor: Int, maxFloor: Int) {
         var roomService = getRetrofit2().create(RoomRetrofitInterface::class.java)
-        roomService.getZoomOUt(centerlat, centerlng, minRent, maxRent, type, minSize, maxSize, minDeposit,
-            maxDeposit, minManage, maxManage, lbLat, lbLng, rtLat, rtLng).enqueue(object : Callback<MapZoomOutResponse> {
+        roomService.getZoomOUt(lbLat, lbLng, rtLat, rtLng, zoomin, minRent, maxRent, type, minSize, maxSize, minDeposit,
+            maxDeposit, minManage, maxManage, minFloor, maxFloor).enqueue(object : Callback<ArrayList<MapZoomOut>> {
             override fun onResponse(
-                call: Call<MapZoomOutResponse>,
-                response: Response<MapZoomOutResponse>
+                call: Call<ArrayList<MapZoomOut>>,
+                response: Response<ArrayList<MapZoomOut>>
             ) {
                 if (response.isSuccessful) {
-                    var resp: MapZoomOutResponse? = response.body()
+                    val resp: ArrayList<MapZoomOut>? = response.body()
                     if (resp != null) {
-                        mapView.onZoomOutSuccess(resp)
-                        Log.d("ZOOMOUT/SUCCESS", response.message())
+                        if (response.code() == 200) {
+                            mapDataView.onZoomOutSuccess(resp)
+                        } else {
+                            mapDataView.onZoomOutFailure(response.code(), response.message())
+                        }
                     }
                 }
             }
 
-            override fun onFailure(call: Call<MapZoomOutResponse>, t: Throwable) {
-                Log.d("ZOOMOUT/FAILURE", t.message.toString())
+            override fun onFailure(call: Call<ArrayList<MapZoomOut>>, t: Throwable) {
+                Log.d("ZOOMOUTLink/FAILURE", t.message.toString())
             }
         })
     }
 
-    fun getZoomIn(centerlat: Double, centerlng: Double, minRent: Double?, maxRent: Double?, type: Int?,
-                   minSize: Double?, maxSize: Double?, minDeposit: Int?, maxDeposit: Int?, minManage: Double?,
-                   maxManage: Double?, lbLat: Double, lbLng: Double, rtLat: Double, rtLng: Double, minFloor: Int, maxFloor: Int) {
+    fun getZoomIn(lbLat: Double, lbLng: Double, rtLat: Double,
+                  rtLng: Double, zoomin: Int, minRent: Double, maxRent: Double, type: Int, minSize: Double, maxSize: Double,
+                  minDeposit: Int, maxDeposit: Int, minManage: Double, maxManage: Double, minFloor: Int, maxFloor: Int) {
         var roomService = getRetrofit2().create(RoomRetrofitInterface::class.java)
-        roomService.getZoomIn(centerlat, centerlng, minRent, maxRent, type, minSize, maxSize, minDeposit,
-            maxDeposit, minManage, maxManage, lbLat, lbLng, rtLat, rtLng, minFloor, maxFloor).enqueue(object: Callback<MapZoomInResponse> {
+        roomService.getZoomIn(lbLat, lbLng, rtLat, rtLng, zoomin, minRent, maxRent, type, minSize, maxSize, minDeposit,
+            maxDeposit, minManage, maxManage, minFloor, maxFloor).enqueue(object: Callback<ArrayList<MapZoomIn>> {
             override fun onResponse(
-                call: Call<MapZoomInResponse>,
-                response: Response<MapZoomInResponse>
+                call: Call<ArrayList<MapZoomIn>>,
+                response: Response<ArrayList<MapZoomIn>>
             ) {
                 if (response.isSuccessful) {
-                    var resp: MapZoomInResponse? = response.body()
+                    var resp: ArrayList<MapZoomIn>? = response.body()
                     if (resp != null) {
-                        mapView.onZoomInSuccess(resp)
-                        Log.d("ZOOMIN/SUCCESS", response.message())
+                        if (response.code() == 200) {
+                            mapDataView.onZoomInSuccess(resp)
+                        } else {
+                            mapDataView.onZoomInFailure(response.code(), response.message())
+                        }
                     }
                 }
             }
 
-            override fun onFailure(call: Call<MapZoomInResponse>, t: Throwable) {
-                mapView.onZoomInFailure(t.message.toString())
-                Log.d("ZOOMIN/FAILURE", t.message.toString())
+            override fun onFailure(call: Call<ArrayList<MapZoomIn>>, t: Throwable) {
+                Log.d("ZOOMINLink/FAILURE", t.message.toString())
             }
         })
     }
 
     fun getRoomDetail(roomId: String) {
         var roomService = getRetrofit2().create(RoomRetrofitInterface::class.java)
-        roomService.getRoomDetail(roomId).enqueue(object : Callback<Estate> {
-            override fun onResponse(call: Call<Estate>, response: Response<Estate>) {
+        roomService.getRoomDetail(roomId).enqueue(object : Callback<List<Room>> {
+            override fun onResponse(call: Call<List<Room>>, response: Response<List<Room>>) {
                 if (response.isSuccessful) {
-                    var resp: Estate? = response.body()
+                    var resp: List<Room>? = response.body()
                     if (resp != null) {
-                        roomView.onDetailSuccess(resp)
+                        roomView.onDetailSuccess(resp as ArrayList<Room>)
                         Log.d("DETAIL/SUCCESS", response.message())
                     }
                 }
             }
 
-            override fun onFailure(call: Call<Estate>, t: Throwable) {
+            override fun onFailure(call: Call<List<Room>>, t: Throwable) {
                 Log.d("DETAIL/FAILURE", t.message.toString())
             }
         })

@@ -13,9 +13,10 @@ import com.example.capstonedesign2.databinding.FragmentMoreBinding
 import com.example.capstonedesign2.ui.MainActivity
 import com.example.capstonedesign2.ui.MyReviewActivity
 import com.example.capstonedesign2.ui.login.GeneralActivity
-import com.example.capstonedesign2.ui.login.IntermediaryActivity
+import com.example.capstonedesign2.ui.login.BrokerActivity
 import com.example.capstonedesign2.ui.login.LoginActivity
 import com.google.gson.Gson
+import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.user.UserApiClient
 
 class MoreFragment() : Fragment() {
@@ -27,17 +28,18 @@ class MoreFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        var spfUser = activity?.getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
+        KakaoSdk.init(this.requireContext(), "534c304e8d235c4f010e28930e8b8b73")
+
+        var spfUser = this.requireContext().getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
         var gson = Gson()
-        var userJson = spfUser?.getString("User", "")
+        var userJson = spfUser.getString("User", "")
         var user = gson.fromJson(userJson, User::class.java)
-        var role = user.role
 
         binding = FragmentMoreBinding.inflate(inflater, container, false)
 
-        binding.nicknameTv.text = "이름: " + user.nickname
+        binding.nicknameTv.text = "이름: ${user.nickname}"
 
-        if (role == "Intermediary") {
+        if (user.role == "Broker") {
             binding.registerIntermediary.visibility = View.GONE
             binding.myreviewTv.visibility = View.GONE
             binding.nicknameTv.isClickable = false
@@ -52,7 +54,7 @@ class MoreFragment() : Fragment() {
             }
 
             binding.registerIntermediary.setOnClickListener {
-                var intent = Intent(this.context, IntermediaryActivity::class.java)
+                var intent = Intent(this.context, BrokerActivity::class.java)
                 intent.putExtra("IntermediaryRegister", "register")
                 startActivity(intent)
             }
@@ -64,6 +66,14 @@ class MoreFragment() : Fragment() {
         }
 
         binding.signOutTv.setOnClickListener {
+            val editor = spfUser.edit()
+            val outUser = User("", "", user.nickname, user.registerNumber, "")
+            val outUserJson = gson.toJson(outUser)
+            editor.apply {
+                putString("User",outUserJson)
+            }
+            editor.apply()
+
             UserApiClient.instance.logout {
                 if (it != null) {
                     Log.e("Hello", "로그아웃 실패. SDK에서 토큰 삭제됨", it)
@@ -77,14 +87,17 @@ class MoreFragment() : Fragment() {
         }
 
         binding.withdrawalTv.setOnClickListener {
+            val editor = spfUser.edit()
             UserApiClient.instance.unlink {
                 if (it != null) {
                     Log.e("Hello", "연결 끊기 실패", it)
                 } else {
                     Log.i("Hello", "연결 끊기 성공. SDK에서 토큰 삭제 됨")
+                    editor.clear()
+                    editor.apply()
                 }
             }
-            (activity as MainActivity).finishAndRemoveTask()
+            (activity as MainActivity).finish()
         }
 
         return binding.root

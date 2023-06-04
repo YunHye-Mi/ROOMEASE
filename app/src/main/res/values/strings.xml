@@ -4,6 +4,8 @@
     <string name="ok">확인</string>
     <string name="cancel">취소</string>
 
+    <string name="square">m&#178;</string>
+
     <string-array name="sort_spinner">
         <item>가까운순</item>
         <item>저렴한순</item>

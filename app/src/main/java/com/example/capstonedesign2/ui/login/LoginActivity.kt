@@ -19,8 +19,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun onClickListener() {
+        var loginDialog = LoginDialog(this)
+
         binding.loginIv.setOnClickListener {
-            var loginDialog = LoginDialog(this)
             loginDialog.show()
         }
     }

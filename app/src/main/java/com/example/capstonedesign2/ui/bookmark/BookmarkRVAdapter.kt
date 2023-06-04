@@ -1,17 +1,18 @@
 package com.example.capstonedesign2.ui.bookmark
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.capstonedesign2.data.entities.Bookmark
-import com.example.capstonedesign2.databinding.ItemResultBinding
+import com.bumptech.glide.Glide
+import com.example.capstonedesign2.data.remote.EstateInfo
+import com.example.capstonedesign2.databinding.ItemBookmarkBinding
 import kotlin.collections.ArrayList
 
-class BookmarkRVAdapter(private val bookmarkList: ArrayList<Bookmark>) : RecyclerView.Adapter<BookmarkRVAdapter.ViewHolder>() {
+class BookmarkRVAdapter(val context: Context, private val bookmarkList: ArrayList<EstateInfo>) : RecyclerView.Adapter<BookmarkRVAdapter.ViewHolder>() {
 
     interface MyItemClickListener{
-        fun onItemClick(bookmark: Bookmark)
-        fun deleteItem(bookmark: Bookmark)
+        fun onItemClick(estateInfo: EstateInfo)
     }
 
     private lateinit var mItemClickListener: MyItemClickListener
@@ -20,7 +21,7 @@ class BookmarkRVAdapter(private val bookmarkList: ArrayList<Bookmark>) : Recycle
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var binding = ItemResultBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        var binding = ItemBookmarkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
@@ -32,9 +33,11 @@ class BookmarkRVAdapter(private val bookmarkList: ArrayList<Bookmark>) : Recycle
 
     override fun getItemCount(): Int = bookmarkList.size
 
-    inner class ViewHolder(val binding: ItemResultBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(bookmark: Bookmark) {
-
+    inner class ViewHolder(val binding: ItemBookmarkBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(estateInfo: EstateInfo) {
+            Glide.with(context).load("${estateInfo.images}?w=400&h=300").into(binding.roomIv)
+            binding.rentAreaTv.text = estateInfo.size.toString()+"(m²)"
+            binding.rentPriceTv.text = "${estateInfo.deposit}/${estateInfo.rent}"
         }
     }
 }

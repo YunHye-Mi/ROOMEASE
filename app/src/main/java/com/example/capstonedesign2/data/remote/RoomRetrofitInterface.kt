@@ -1,56 +1,56 @@
 package com.example.capstonedesign2.data.remote
 
-import com.example.capstonedesign2.data.entities.Estate
 import retrofit2.Call
 import retrofit2.http.*
 
 interface RoomRetrofitInterface {
 
-    @POST("/api/broker/estate/:room_id")
-    fun addRoom(@Header(value = "Authorization") authorization: String,): Call<RoomResponse>
+    @POST("/api/broker/room")
+    fun addRoom(@Header(value = "Authorization") authorization: String, @Query("room_id") roomId: Int): Call<RoomResponse>
 
     @Headers("Content-Type: application/json")
     @GET("/api/room")
     fun getZoomOUt(
-        @Query("centerlat") centerlat: Double,
-        @Query("centerlng") centerlng: Double,
-        @Query("minRent") minRent: Double?,
-        @Query("maxRent") maxRent: Double?,
-        @Query("type") type: Int?,
-        @Query("minSize") minSize: Double?,
-        @Query("maxSize") maxSize: Double?,
-        @Query("minDeposit") minDeposit: Int?,
-        @Query("maxDeposit") maxDeposit: Int?,
-        @Query("minManage") minManage: Double?,
-        @Query("maxManage") maxManage: Double?,
-        @Query("lbLat") lbLat: Double, // 좌측 하단 위도
-        @Query("lbLng") lbLng: Double, // 좌측 하단 경도
-        @Query("rtLat") rtLat: Double, // 우측 상단 위도
-        @Query("rtLng") rtLng: Double // 우측 상단 경도
-    ): Call<MapZoomOutResponse>
-
-    @Headers("Content-Type: application/json")
-    @GET("/api/room")
-    fun getZoomIn(
-        @Query("centerlat") centerlat: Double,
-        @Query("centerlng") centerlng: Double,
-        @Query("minRent") minRent: Double?,
-        @Query("maxRent") maxRent: Double?,
-        @Query("type") type: Int?, // 전월세 0과 1로 구분
-        @Query("minSize") minSize: Double?,
-        @Query("maxSize") maxSize: Double?,
-        @Query("minDeposit") minDeposit: Int?,
-        @Query("maxDeposit") maxDeposit: Int?,
-        @Query("minManage") minManage: Double?,
-        @Query("maxManage") maxManage: Double?,
         @Query("lbLat") lbLat: Double, // 좌측 하단 위도
         @Query("lbLng") lbLng: Double, // 좌측 하단 경도
         @Query("rtLat") rtLat: Double, // 우측 상단 위도
         @Query("rtLng") rtLng: Double, // 우측 상단 경도
+        @Query("zoomin") zoomIn: Int, // 0이면 줌아웃, 1이면 줌인
+        @Query("minRent") minRent: Double,
+        @Query("maxRent") maxRent: Double,
+        @Query("type") type: Int, // 전월세 0과 1로 구분
+        @Query("minSize") minSize: Double,
+        @Query("maxSize") maxSize: Double,
+        @Query("minDeposit") minDeposit: Int,
+        @Query("maxDeposit") maxDeposit: Int,
+        @Query("minManage") minManage: Double,
+        @Query("maxManage") maxManage: Double,
         @Query("minFloor") minFloor: Int?,
-        @Query("maxFloor") maxFloor: Int?
-    ): Call<MapZoomInResponse>
+        @Query("maxFloor") maxFloor: Int?,
+    ): Call<ArrayList<MapZoomOut>>
 
+    @Headers("Content-Type: application/json")
+    @GET("/api/room")
+    fun getZoomIn(
+        @Query("lbLat") lbLat: Double, // 좌측 하단 위도
+        @Query("lbLng") lbLng: Double, // 좌측 하단 경도
+        @Query("rtLat") rtLat: Double, // 우측 상단 위도
+        @Query("rtLng") rtLng: Double, // 우측 상단 경도
+        @Query("zoomin") zoomIn: Int,
+        @Query("minRent") minRent: Double,
+        @Query("maxRent") maxRent: Double,
+        @Query("type") type: Int, // 전월세 0과 1로 구분
+        @Query("minSize") minSize: Double,
+        @Query("maxSize") maxSize: Double,
+        @Query("minDeposit") minDeposit: Int,
+        @Query("maxDeposit") maxDeposit: Int,
+        @Query("minManage") minManage: Double,
+        @Query("maxManage") maxManage: Double,
+        @Query("minFloor") minFloor: Int,
+        @Query("maxFloor") maxFloor: Int
+    ): Call<ArrayList<MapZoomIn>>
+
+    @Headers("Content-Type: application/json")
     @GET("/api/detail")
-    fun getRoomDetail(@Query("room_id") id: String): Call<Estate>
+    fun getRoomDetail(@Query("id") id: String): Call<List<Room>>
 }

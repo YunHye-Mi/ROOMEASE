@@ -3,7 +3,7 @@ package com.example.capstonedesign2.ui.more
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.capstonedesign2.data.entities.Review
+import com.example.capstonedesign2.data.remote.Review
 import com.example.capstonedesign2.databinding.ItemMyreviewBinding
 import java.util.ArrayList
 
@@ -32,10 +32,10 @@ class MyReviewRVAdapter(private val reviewList: ArrayList<Review>) : RecyclerVie
 
     inner class ViewHolder(val binding: ItemMyreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(review: Review) {
-            binding.estateNameTv.text = review.estateId.toString()
-            binding.myPeriodTv.text = review.period
-            binding.rateTv.text = ((review.public_rate.toDouble() + review.ambient_rate.toDouble() + review.lived_rate.toDouble()) / 3.0 ).toDouble().toString()
-            binding.contentTv.text = review.content
+            binding.estateNameTv.text = review.roomId.toString()
+            binding.myPeriodTv.text = review.period.toString()
+            binding.rateTv.text = review.score.toString()
+            binding.contentTv.text = review.freeComments
             binding.deleteCb.isChecked = false
         }
     }

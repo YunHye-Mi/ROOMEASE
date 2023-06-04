@@ -12,24 +12,38 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.capstonedesign2.R
 import com.example.capstonedesign2.data.entities.User
 import com.example.capstonedesign2.data.remote.AuthService
+import com.example.capstonedesign2.data.remote.RefreshRequest
 import com.example.capstonedesign2.data.remote.RegisterRequest
-import com.example.capstonedesign2.databinding.ActivityIntermediaryBinding
+import com.example.capstonedesign2.databinding.ActivityBrokerBinding
 import com.example.capstonedesign2.ui.MainActivity
 import com.google.gson.Gson
 
-class IntermediaryActivity : AppCompatActivity(), RegisterView {
-    lateinit var binding : ActivityIntermediaryBinding
+class BrokerActivity : AppCompatActivity(), RegisterView, RefreshView {
+    lateinit var binding : ActivityBrokerBinding
     private var authService = AuthService()
     private var access = ""
+    private var refresh = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityIntermediaryBinding.inflate(layoutInflater)
+        binding = ActivityBrokerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         authService.setRegisterView(this)
+        authService.setRefreshView(this)
+
+        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val userJson = userSpf.getString("User", "")
+        val gson = Gson()
+        val user = gson.fromJson(userJson, User::class.java)
+
+        if (user != null) {
+            if (user.accessToken != "" && user.refreshToken != "" && user.nickname != "" && user.registerNumber!!.isNotEmpty()) {
+                var intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+        }
 
         // 화면이 시작되었을 때 닉네임 입력창에 포커스를 맞춰 키보드가 올라오도록 함.
         binding.nickEt.clearFocus()
@@ -64,6 +78,7 @@ class IntermediaryActivity : AppCompatActivity(), RegisterView {
         // 유저에 등록하기 위해 access token과 access token을 갱신하기 위해 refresh token을 가져옴.
         val spf = getSharedPreferences("token", MODE_PRIVATE)
         access = spf.getString("access", "").toString()
+        refresh = spf.getString("refresh", "").toString()
 
         writeView()
     }
@@ -79,7 +94,7 @@ class IntermediaryActivity : AppCompatActivity(), RegisterView {
 
                     binding.startTv.setOnClickListener {
                         var intent = Intent(this, MainActivity::class.java)
-                        intent.putExtra("user", "Intermediary")
+                        intent.putExtra("user", "Broker")
                         startActivity(intent)
                     }
                 } else {
@@ -94,22 +109,7 @@ class IntermediaryActivity : AppCompatActivity(), RegisterView {
                     binding.startTv.setOnClickListener {
                         finish()
 
-                        val name = binding.nickEt.text.toString()
-                        val user = User(0, access, name, "1234567890", "Intermediary")
-                        val gson = Gson()
-                        val userJson = gson.toJson(user)
-                        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
-                        val editor = userSpf.edit()
-                        editor.apply {
-                            putString("User", userJson)
-                        }
-
-                        editor.commit()
-
-                        //                        authService.register(access, RegisterRequest(binding.nickEt.text.toString(), binding.intermediaryEt.text.toString()))
-                        var intent = Intent(this, MainActivity::class.java)
-                        intent.putExtra("user", "Intermediary")
-                        startActivity(intent)
+                        authService.register(access, RegisterRequest(binding.nickEt.text.toString(), binding.intermediaryEt.text.toString()))
                     }
                 }
                 else {
@@ -143,15 +143,66 @@ class IntermediaryActivity : AppCompatActivity(), RegisterView {
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
-    override fun onRegisterSuccess(code: Int) {
+    override fun onRegisterSuccess(message: String, data: Boolean) {
         Toast.makeText(this, "등록 완료", Toast.LENGTH_LONG)
-        var intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("user", "Intermediary")
         finish()
+        val name = binding.nickEt.text.toString()
+        var role  = ""
+        role = if (data) {
+            "Broker"
+        } else {
+            "General"
+        }
+        val user = User(access, refresh, name, binding.intermediaryEt.text.toString(), role)
+        val gson = Gson()
+        val userJson = gson.toJson(user)
+        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val editor = userSpf.edit()
+        editor.apply {
+            putString("User", userJson)
+        }
+
+        editor.apply()
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 
     override fun onRegisterFailure(code: Int, message: String) {
-        Toast.makeText(this, "이름 또는 공인중개사 번호가 틀렸습니다.", Toast.LENGTH_LONG)
+        when (code) {
+            401 -> {
+                Log.d("Register/Failure", "$code/$message")
+                authService.refresh(access, RefreshRequest(refresh))
+            }
+            403 -> Log.d("Register/Failure", "$code/$message")
+        }
+    }
+
+    override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
+        val updateUser = User(accessToken, refreshToken, binding.nickEt.text.toString(), binding.intermediaryEt.text.toString(), "General")
+        val gson = Gson()
+        val userJson = gson.toJson(updateUser)
+        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val editor = userSpf.edit()
+        editor.apply {
+            putString("User", userJson)
+        }
+
+        startActivity(intent)
+
+        editor.commit()
+
+        authService.register(accessToken, RegisterRequest(binding.nickEt.text.toString(), binding.intermediaryEt.text.toString()))
+
+        Log.d("ReRegister/Success", "${updateUser.nickname}/${updateUser.role}")
+    }
+
+    override fun onRefreshFailure(code: Int, message: String) {
+        when (code) {
+            401 -> {
+                Log.d("Refresh/Failure", "$code/$message")
+                authService.refresh(access, RefreshRequest(refresh))
+            }
+            403 -> Log.d("Refresh/Failure", "$code/$message")
+        }
     }
 }

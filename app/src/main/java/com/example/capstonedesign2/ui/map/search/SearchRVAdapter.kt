@@ -10,7 +10,7 @@ import java.util.ArrayList
 class SearchRVAdapter(private var addressList: ArrayList<SearchResponse>) : RecyclerView.Adapter<SearchRVAdapter.ViewHolder>() {
 
     interface MyItemClickListener{
-        fun onItemClick(searchResponse: SearchResponse)
+        fun onItemClick(search: SearchResponse)
     }
 
     private lateinit var mItemClickListener: MyItemClickListener
@@ -37,9 +37,9 @@ class SearchRVAdapter(private var addressList: ArrayList<SearchResponse>) : Recy
     override fun getItemCount(): Int = addressList.size
 
     inner class ViewHolder(val binding: ItemSearchBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(searchResponse: SearchResponse) {
-            binding.addressTv.text = searchResponse.dong
-            binding.detailAddressTv.text = searchResponse.fullAddress
+        fun bind(search: SearchResponse) {
+            binding.addressTv.text = search.dong
+            binding.detailAddressTv.text = search.fullAddress
         }
     }
 }

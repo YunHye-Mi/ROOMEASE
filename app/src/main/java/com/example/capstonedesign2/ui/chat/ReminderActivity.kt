@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -20,12 +21,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.capstonedesign2.R
-import com.example.capstonedesign2.data.entities.Reminder
-import com.example.capstonedesign2.data.remote.KakaoService
-import com.example.capstonedesign2.data.remote.Place
-import com.example.capstonedesign2.data.remote.PlaceSearch
-import com.example.capstonedesign2.data.remote.ResultSearchKeyword
+import com.example.capstonedesign2.data.entities.User
+import com.example.capstonedesign2.data.remote.*
 import com.example.capstonedesign2.databinding.ActivityReminderBinding
+import com.example.capstonedesign2.ui.login.RefreshView
 import com.example.capstonedesign2.ui.map.KaKaoView
 import com.google.gson.Gson
 import net.daum.mf.map.api.MapPOIItem
@@ -33,19 +32,22 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.microedition.khronos.opengles.GL10
 import kotlin.collections.ArrayList
 
 
-class ReminderActivity : AppCompatActivity(), KaKaoView {
+class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshView {
     lateinit var binding: ActivityReminderBinding
-    private var searchList = ArrayList<PlaceSearch>()
+    private var searchList = ArrayList<Document>()
     private var gson = Gson()
+    lateinit var user: User
     lateinit var spf: SharedPreferences
-    private var kakaoView = KakaoService()
+    private var kakaoView = KaKaoService()
     private var placeRVAdapter = PlaceRVAdapter(searchList)
     lateinit var view: View
     lateinit var mapView: MapView
+    private val reminderService = ReminderService()
+    private val authService = AuthService()
+    private var roomId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,31 +55,34 @@ class ReminderActivity : AppCompatActivity(), KaKaoView {
         setContentView(binding.root)
 
         kakaoView.setKaKaoView(this)
+        reminderService.setReminderView(this)
+        authService.setRefreshView(this)
 
         spf = getSharedPreferences("reminder", MODE_PRIVATE)
+
+        var spf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        var userJson = spf.getString("User", "")
+        user = gson.fromJson(userJson, User::class.java)
+        roomId = intent.getIntExtra("chatRoomId", roomId)
 
         // 클릭 이벤트 발생 시
         onClickListener()
 
         //모두 다 작성하였을 때
         writeAllView()
-
     }
 
     // 모든 TextView를 작성
     private fun writeAllView(){
-        binding.uploadRecruitActivity.viewTreeObserver.addOnGlobalLayoutListener {
+        binding.uploadReminderActivity.viewTreeObserver.addOnGlobalLayoutListener {
             if(binding.reminderSelectDateTv.text.toString().isNotEmpty() && binding.reminderSelectTimeTv.text.toString().isNotEmpty()
                 && binding.reminderSelectPlaceTv.text.toString().isNotEmpty()) {
-                binding.reminderUploadTv.setTextColor(Color.parseColor("#754C24"))
+                binding.reminderUploadTv.setTextColor(Color.WHITE)
                 binding.reminderUploadTv.setBackgroundResource(R.drawable.filter_apply_button)
 
                 binding.reminderUploadTv.setOnClickListener {
                     Toast.makeText(this,"일정 등록 완료", Toast.LENGTH_LONG).show()
-                    var reminderJson = gson.toJson(getReminder())
-                    var editor = spf.edit()
-                    editor.putString("saveReminder", reminderJson)
-                    editor.commit()
+                    reminderService.addReminder(user.accessToken, getReminder())
                     finish()
                 }
             }
@@ -85,7 +90,7 @@ class ReminderActivity : AppCompatActivity(), KaKaoView {
                 binding.reminderUploadTv.setTextColor(Color.parseColor("#EBEBEB"))
                 binding.reminderUploadTv.setBackgroundResource(R.drawable.filter_button)
                 binding.reminderUploadTv.setOnClickListener {
-                    Toast.makeText(this,"아직 작성되지 않은 부분이 있어요 😅", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"아직 작성 되지 않은 부분이 있어요😅", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -136,15 +141,15 @@ class ReminderActivity : AppCompatActivity(), KaKaoView {
         button.setOnClickListener {
             hideKeyBoard()
             val search = view.findViewById<EditText>(R.id.dialog_search_et).text.toString()
-            var pageNumber = 10
-            kakaoView.getSearchKeyword(search, pageNumber)
+            kakaoView.getSearchKeyword(search, null)
         }
 
+        search.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
         search.setOnEditorActionListener { view, i, event ->
             if (event != null && (event.action == KeyEvent.KEYCODE_ENTER || i == EditorInfo.IME_ACTION_DONE)) {
                 val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(search.windowToken, 0)
-                hideKeyBoard()
+                search.clearFocus()
                 true
             } else {
                 false
@@ -154,15 +159,15 @@ class ReminderActivity : AppCompatActivity(), KaKaoView {
         var editor = spf.edit()
 
         placeRVAdapter.setMyItemClickListener(object : PlaceRVAdapter.MyItemClickListener {
-            override fun onItemClick(placeSearch: PlaceSearch) {
+            override fun onItemClick(document: Document) {
                 if (mapView.poiItems.isNotEmpty())
                     mapView.removeAllPOIItems()
 
-                val markerPoint = MapPoint.mapPointWithGeoCoord(placeSearch.y, placeSearch.x)
+                val markerPoint = MapPoint.mapPointWithGeoCoord(document.y.toDouble(), document.x.toDouble())
                 val marker = MapPOIItem()
                 marker.apply {
-                    itemName = placeSearch.name
-                    tag = placeSearch.id
+                    itemName = document.placeName
+                    tag = document.id.toInt()
                     mapPoint = markerPoint
                     markerType = MapPOIItem.MarkerType.BluePin
                     isShowCalloutBalloonOnTouch = false
@@ -172,12 +177,12 @@ class ReminderActivity : AppCompatActivity(), KaKaoView {
                 mapView.setMapCenterPointAndZoomLevel(markerPoint, 1, true)
 
                 editor.apply {
-                    putString("reminderPlace", placeSearch.name)
-                    putString("reminderPlaceLat", placeSearch.x.toString())
-                    putString("reminderPlaceLng", placeSearch.y.toString())
+                    putString("reminderPlace", document.placeName)
+                    putString("reminderPlaceLng", document.x)
+                    putString("reminderPlaceLat", document.y)
                 }
 
-                selectedPlace = placeSearch.name
+                selectedPlace = document.placeName
             }
         })
 
@@ -265,36 +270,36 @@ class ReminderActivity : AppCompatActivity(), KaKaoView {
         val date: String = binding.reminderSelectDateTv.text.toString()
         val time: String = binding.reminderSelectTimeTv.text.toString()
         val place: String = binding.reminderSelectPlaceTv.text.toString()
-        val placeLat: Double = spf.getString("reminderPlaceLat", "")!!.toDouble()
-        val placeLng: Double = spf.getString("reminderPlaceLng", "")!!.toDouble()
+        val placeLat: String = spf.getString("reminderPlaceLat", "")!!.toString()
+        val placeLng: String = spf.getString("reminderPlaceLng", "")!!.toString()
 
-        return Reminder(0, date, time, place, placeLat, placeLng)
+        return Reminder(roomId, date, time, place, placeLat, placeLng)
     }
 
-    override fun onCategorySuccess(place: Place) {
+    override fun onCategorySuccess(document1: String, document: ArrayList<Document>) {
         TODO("Not yet implemented")
     }
 
-    override fun onCategoryFailure(code: Int, message: String) {
+    override fun onCategoryFailure(message: String) {
         TODO("Not yet implemented")
     }
 
-    override fun onKeyWordSuccess(resultSearchKeyword: ResultSearchKeyword) {
+    override fun onKeyWordSuccess(resultSearchKeyword: ResultSearchKeyword, message: String) {
         if (!resultSearchKeyword.documents.isNullOrEmpty()) {
             if (searchList.isNotEmpty()) {
                 searchList.clear()
             }
 
             for (document in resultSearchKeyword.documents) {
-                var placeSearch = PlaceSearch(document.id.toInt(), document.placeName, document.road_address_name, document.x.toDouble(), document.y.toDouble())
-                searchList.add(placeSearch)
+                var documentSearch = Document(document.id, document.placeName, document.category_name, document.category_group_code,document.category_group_name, document.phone, document.addressName, document.road_address_name, document.x, document.y, document.place_url, document.distance)
+                searchList.add(documentSearch)
             }
             placeRVAdapter.notifyDataSetChanged()
         }
         Log.d("KAKAO/SUCCESS", resultSearchKeyword.meta.total_count.toString())
     }
 
-    override fun onKeyWordFailure(code: Int, message: String) {
+    override fun onKeyWordFailure(message: String) {
         Toast.makeText(this, "검색 결과가 없습니다", Toast.LENGTH_LONG).show()
         Log.d("KAKAO/FAILURE", message)
     }
@@ -303,5 +308,54 @@ class ReminderActivity : AppCompatActivity(), KaKaoView {
     private fun hideKeyBoard(){
         var inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+
+    override fun onReminderSuccess(message: String) {
+        Log.d("AddReminder/Success", message)
+    }
+
+    override fun onReminderFailure(code: Int, message: String) {
+        when (code) {
+            401 -> {
+                Log.d("AddReminder/Failure", "$code/$message")
+                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+            }
+            403 -> Log.d("AddReminder/Failure", "$code/$message")
+        }
+    }
+
+    override fun onSeeReminderSuccess(reminder: SeeReminder?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onSeeReminderFailure(code: Int, message: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
+        val updateUser = User(accessToken, refreshToken, user.nickname, null, "General")
+        val gson = Gson()
+        val userJson = gson.toJson(updateUser)
+        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val editor = userSpf.edit()
+        editor.apply {
+            putString("User", userJson)
+        }
+
+        editor.commit()
+
+        reminderService.addReminder(accessToken, getReminder())
+
+        Log.d("ReAddReminder", "${updateUser.accessToken}/$roomId")
+    }
+
+    override fun onRefreshFailure(code: Int, message: String) {
+        when (code) {
+            401 -> {
+                Log.d("Refresh/Failure", "$code/$message")
+                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+            }
+            403 -> Log.d("Refresh/Failure", "$code/$message")
+        }
     }
 }

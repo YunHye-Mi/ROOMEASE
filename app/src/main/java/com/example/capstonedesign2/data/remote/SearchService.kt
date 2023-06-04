@@ -22,10 +22,10 @@ class SearchService() {
 
     fun getKeyword(query: String) {
         var searchService = getRetrofit2().create(SearchRetrofitInterface::class.java)
-        searchService.getKeyword(query).enqueue(object : Callback<SearchResponse> {
-            override fun onResponse(call: Call<SearchResponse>, response: Response<SearchResponse>) {
+        searchService.getKeyword(query).enqueue(object : Callback<List<SearchResponse>> {
+            override fun onResponse(call: Call<List<SearchResponse>>, response: Response<List<SearchResponse>>) {
                 if (response.isSuccessful) {
-                    var resp: SearchResponse? = response.body()
+                    var resp: List<SearchResponse>? = response.body()
                     if (resp != null) {
                         searchTextView.onSearchSuccess(resp)
                         Log.d("SEARCH/SUCCESS", response.message())
@@ -33,28 +33,27 @@ class SearchService() {
                 }
             }
 
-            override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
+            override fun onFailure(call: Call<List<SearchResponse>>, t: Throwable) {
                 searchTextView.onSearchFailure(t.message.toString())
-                Log.d("SEARCH/FAILURE", t.message.toString())
             }
         })
     }
 
-    fun getResultList(address: String, count: Int, sort: Int) {
+    fun getResultList(address: String, count: Int?, sort: Int) {
         var searchService = getRetrofit2().create(SearchRetrofitInterface::class.java)
-        searchService.getResultList(address, count, sort).enqueue(object : Callback<ResultResponse> {
-            override fun onResponse(call: Call<ResultResponse>, response: Response<ResultResponse>) {
+        searchService.getResultList(address, count, sort).enqueue(object : Callback<List<ResultResponse>> {
+            override fun onResponse(call: Call<List<ResultResponse>>, response: Response<List<ResultResponse>>) {
                 if (response.isSuccessful) {
-                    var resp: ResultResponse? = response.body()
+                    var resp: List<ResultResponse>? = response.body()
                     if (resp != null) {
-                        resultView.onResultSuccess(resp)
+                        resultView.onResultSuccess(resp as ArrayList<ResultResponse>)
                         Log.d("RESULT/SUCCESS", response.message())
                     }
                 }
             }
 
-            override fun onFailure(call: Call<ResultResponse>, t: Throwable) {
-                Log.d("RESULT/FAILURE", t.message.toString())
+            override fun onFailure(call: Call<List<ResultResponse>>, t: Throwable) {
+                resultView.onResultFailure(t.message.toString())
             }
 
         })

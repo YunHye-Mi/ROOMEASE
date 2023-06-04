@@ -4,11 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.capstonedesign2.data.entities.User
 import com.example.capstonedesign2.data.remote.SubscribeChatResponse
 import com.example.capstonedesign2.databinding.ItemMessageMeBinding
 import com.example.capstonedesign2.databinding.ItemMessageOtherBinding
-import com.google.gson.Gson
 
 class MessageListAdapter(private val messageList: ArrayList<SubscribeChatResponse>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val message_sent = 1
@@ -41,12 +39,10 @@ class MessageListAdapter(private val messageList: ArrayList<SubscribeChatRespons
 
     override fun getItemViewType(position: Int): Int {
         var chatMessage = messageList[position]
-        var gson = Gson()
-        var user = gson.fromJson("currentUser", User::class.java)
-        if (chatMessage.sessionId == user.id) {
-            return message_sent
+        return if (chatMessage.myMessage) {
+            message_sent
         } else {
-            return message_received
+            message_received
         }
     }
 
@@ -57,8 +53,8 @@ class MessageListAdapter(private val messageList: ArrayList<SubscribeChatRespons
         fun bind(chatMessage: SubscribeChatResponse) {
             super.itemView
 
-            binding.messageTv.text = chatMessage.content
-            binding.timeTv.text = chatMessage.timestamp.toString()
+            binding.messageTv.text = chatMessage.message
+            binding.timeTv.text = chatMessage.timeStamp.toString()
         }
     }
 
@@ -69,8 +65,8 @@ class MessageListAdapter(private val messageList: ArrayList<SubscribeChatRespons
         fun bind(chatMessage: SubscribeChatResponse) {
             super.itemView
 
-            binding.messageTv.text = chatMessage.content
-            binding.timeTv.text = chatMessage.timestamp.toString()
+            binding.messageTv.text = chatMessage.message
+            binding.timeTv.text = chatMessage.timeStamp.toString()
         }
     }
 }

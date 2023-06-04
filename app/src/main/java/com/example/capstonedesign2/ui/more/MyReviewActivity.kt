@@ -2,16 +2,15 @@ package com.example.capstonedesign2.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.CheckBox
+import android.util.Log
 import android.widget.PopupMenu
-import androidx.core.view.get
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstonedesign2.R
-import com.example.capstonedesign2.data.entities.Review
+import com.example.capstonedesign2.data.remote.Review
 import com.example.capstonedesign2.databinding.ActivityMyreviewBinding
-import com.example.capstonedesign2.ui.detail.review.ReviewRVAdapter
 import com.example.capstonedesign2.ui.more.MyReviewRVAdapter
-import java.util.ArrayList
+import kotlin.collections.ArrayList
 
 class MyReviewActivity : AppCompatActivity() {
     lateinit var binding : ActivityMyreviewBinding
@@ -30,12 +29,6 @@ class MyReviewActivity : AppCompatActivity() {
         binding.reviewRv.adapter = reviewRVAdapter
         binding.reviewRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        reviewData.apply {
-            add(Review("mm", 1,20230304, "4년 이내 거주", "대학생", "여성", 4, 3, 3, "집에서 곰팡이 냄새가 너무 나요."))
-            add(Review("mm", 2,20230304, "4년 이내 거주", "대학생", "여성", 4, 3, 3, "집에서 곰팡이 냄새가 너무 나요."))
-            add(Review("mm", 3,20230304, "4년 이내 거주", "대학생", "여성", 4, 3, 3, "집에서 곰팡이 냄새가 너무 나요."))
-        }
-
         var checkedList = reviewRVAdapter.checkedList
 
         binding.moreIv.setOnClickListener {
@@ -46,11 +39,13 @@ class MyReviewActivity : AppCompatActivity() {
                 when (menuItem.itemId) {
                     R.id.selected_delete -> {
                         removeReview(checkedList)
+                        Toast.makeText(this, "해당 리뷰 삭제", Toast.LENGTH_SHORT)
                         return@setOnMenuItemClickListener true
                     }
 
                     else -> {
                         reviewData.removeAll(reviewData.toSet())
+                        Toast.makeText(this, "리뷰 전체 삭제", Toast.LENGTH_SHORT)
                         reviewRVAdapter.notifyDataSetChanged()
                         return@setOnMenuItemClickListener true
                     }

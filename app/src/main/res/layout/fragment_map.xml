@@ -104,8 +104,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/infra_maker_filter_bt"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="20dp"
         android:backgroundTint="#754C24"
@@ -114,8 +114,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@drawable/outline_place_24"
             android:layout_gravity="center"
             app:tint="@color/white" />
@@ -140,13 +140,6 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/outline_subway_24"
-                android:layout_marginTop="5dp"
-                android:scaleType="centerCrop"/>
-            <ImageView
-                android:id="@+id/bus_bt"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/outline_directions_bus_24"
                 android:layout_marginTop="5dp"
                 android:scaleType="centerCrop"/>
             <ImageView

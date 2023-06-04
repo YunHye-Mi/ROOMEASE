@@ -76,19 +76,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="2dp"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:text="층"
-                    android:textAppearance="@style/detail_semi_text"/>
-                <TextView
-                    android:id="@+id/flr_no_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="4층"
-                    android:textAppearance="@style/detail_semi_text"/>
-            </LinearLayout>
+                android:gravity="center"/>
         </LinearLayout>
 
         <ImageView

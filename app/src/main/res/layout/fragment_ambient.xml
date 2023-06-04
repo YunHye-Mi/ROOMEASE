@@ -1,138 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_ambient_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="20dp"
-    android:layout_marginTop="20dp"
-    android:layout_marginEnd="20dp"
-    android:orientation="vertical"
-    android:rowCount="3"
-    android:columnCount="2"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/near_cafe"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ambient_rv"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_local_cafe_24"/>
-        <TextView
-            android:id="@+id/near_cafe_tv"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="N분"
-            android:textAlignment="center"
-            android:textAppearance="@style/tabview_text"/>
-    </LinearLayout>
+        android:isScrollContainer="false"
+        tools:listitem="@layout/item_detail"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <LinearLayout
-        android:id="@+id/near_hospital"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_local_hospital_24"/>
-        <TextView
-            android:id="@+id/near_hospital_tv"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="N분"
-            android:textAlignment="center"
-            android:textAppearance="@style/tabview_text"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/near_restaurant"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/outline_restaurant_24"/>
-        <TextView
-            android:id="@+id/near_restaurant_tv"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="N분"
-            android:textAlignment="center"
-            android:textAppearance="@style/tabview_text"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/near_market"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="10dp"
-        android:gravity="center">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_store_24"/>
-        <TextView
-            android:id="@+id/near_market_tv"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="N분"
-            android:textAlignment="center"
-            android:textAppearance="@style/tabview_text"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/near_pharmacy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="10dp"
-        android:gravity="center">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_medication_24"/>
-        <TextView
-            android:id="@+id/near_pharmacy_tv"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="N분"
-            android:textAlignment="center"
-            android:textAppearance="@style/tabview_text"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/near_fitness"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="10dp"
-        android:gravity="center">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/outline_fitness_center_24"/>
-        <TextView
-            android:id="@+id/near_fitness_tv"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="N분"
-            android:textAlignment="center"
-            android:textAppearance="@style/tabview_text"/>
-    </LinearLayout>
-
-</GridLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

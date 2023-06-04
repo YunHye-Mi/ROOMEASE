@@ -3,40 +3,37 @@ package com.example.capstonedesign2.ui.map.search
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstonedesign2.R
 import com.example.capstonedesign2.data.remote.ResultResponse
-import com.example.capstonedesign2.data.remote.SearchResponse
 import com.example.capstonedesign2.data.remote.SearchService
 import com.example.capstonedesign2.databinding.ActivityResultBinding
 import com.example.capstonedesign2.ui.detail.DetailActivity
-import com.google.gson.Gson
 
 class ResultActivity : AppCompatActivity(), ResultView {
     lateinit var binding : ActivityResultBinding
-    private var resultList = ArrayList<ResultResponse>()
+    private var resultResponseList = ArrayList<ResultResponse>()
+    private var searchService = SearchService()
+    lateinit var resultRVAdapter: ResultRVAdapter
+    private var dong = ""
+    private var full = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var dong = intent.getStringExtra("search_dong")
-        var full = intent.getStringExtra("search_full")
+        dong = intent.getStringExtra("search_dong").toString()
+        full = intent.getStringExtra("search_full").toString()
 
-        var searchService = SearchService()
-        searchService.setResultView(this)
-        if (full != null) {
-            searchService.getResultList(full, 100, 1)
-        }
+        Log.d("DONG/FULL", "$dong/$full")
 
         binding.backIv.setOnClickListener {
             onBackPressed()
         }
-
-        binding.searchTv.text = dong
 
         val spinner = binding.sortSpinner
 
@@ -45,9 +42,7 @@ class ResultActivity : AppCompatActivity(), ResultView {
             R.array.sort_spinner,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
             spinner.adapter = adapter
         }
 
@@ -57,20 +52,20 @@ class ResultActivity : AppCompatActivity(), ResultView {
                 when (position) {
                     0 -> {
                         if (full != null) {
-                            resultList.clear()
-                            searchService.getResultList(full, 100, 1)
+                            resultResponseList.clear()
+                            searchService.getResultList(full, 10000, 1)
                         }
                     }
                     1 -> {
                         if (full != null) {
-                            resultList.clear()
-                            searchService.getResultList(full, 100, 2)
+                            resultResponseList.clear()
+                            searchService.getResultList(full, 10000, 2)
                         }
                     }
                     else -> {
                         if (full != null) {
-                            resultList.clear()
-                            searchService.getResultList(full, 100, 3)
+                            resultResponseList.clear()
+                            searchService.getResultList(full, 10000, 3)
                         }
                     }
                 }
@@ -84,8 +79,17 @@ class ResultActivity : AppCompatActivity(), ResultView {
         initRV()
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        searchService.setResultView(this)
+        if (full != null) {
+            searchService.getResultList(full, null, 1)
+        }
+    }
+
     fun initRV() {
-        val resultRVAdapter = ResultRVAdapter(resultList)
+        resultRVAdapter = ResultRVAdapter(this, resultResponseList)
         var intent = Intent(this, DetailActivity::class.java)
 
         binding.resultRv.adapter = resultRVAdapter
@@ -99,7 +103,24 @@ class ResultActivity : AppCompatActivity(), ResultView {
         } )
     }
 
-    override fun onResultSuccess(response: ResultResponse) {
-        resultList.add(response)
+    override fun onResultSuccess(response: ArrayList<ResultResponse>) {
+        if (resultResponseList.isNotEmpty()) {
+            resultResponseList.clear()
+        }
+        for (i in response) {
+            resultResponseList.add(i)
+        }
+        resultRVAdapter.notifyDataSetChanged()
+        Log.d("RESULT/SUCCESS", "검색 결과 리스트 로드 완료")
+
+        if (response.size > 999) {
+            binding.searchTv.text = "\"$dong\"검색 결과(999+)"
+        } else {
+            binding.searchTv.text ="\"$dong\"검색 결과(${response.size})"
+        }
+    }
+
+    override fun onResultFailure(message: String) {
+        Log.d("RESULT/FAILURE", message)
     }
 }

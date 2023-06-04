@@ -1,6 +1,7 @@
 package com.example.capstonedesign2.data.remote
 
 import com.google.gson.annotations.SerializedName
+import org.json.JSONObject
 
 data class AuthResponse(
     @SerializedName(value = "status")val status: Int,
@@ -25,8 +26,12 @@ data class RegisterRequest(
 )
 
 data class RegisterResponse(
-    @SerializedName("status") var status: Int,
-    @SerializedName("success") var success: Boolean,
-    @SerializedName("message") var message: String,
-    @SerializedName("data") var data: String?
+    @SerializedName(value = "status") var status: Int,
+    @SerializedName(value = "success") var success: Boolean,
+    @SerializedName(value = "message") var message: String,
+    @SerializedName(value = "data") var data: Role
+)
+
+data class Role(
+    @SerializedName(value = "isBroker") val isBroker: Boolean
 )

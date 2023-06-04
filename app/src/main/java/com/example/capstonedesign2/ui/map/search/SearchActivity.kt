@@ -30,6 +30,9 @@ class SearchActivity : AppCompatActivity(), SearchTextView {
         binding.searchSv.isIconified = false
         binding.searchSv.isFocusableInTouchMode = true
 
+        var searchService = SearchService()
+        searchService.setSearchView(this)
+
         binding.searchSv.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 // 검색어 제출 시 동작하는 코드 작성
@@ -39,12 +42,15 @@ class SearchActivity : AppCompatActivity(), SearchTextView {
             override fun onQueryTextChange(newText: String?): Boolean {
                 // 검색어 변경 시 동작하는 코드 작성
                 if (newText.toString().isNullOrEmpty()) {
-                    if (filteredList.isNotEmpty())
+                    if (filteredList.isNotEmpty()) {
                         filteredList.clear()
+                    }
                     binding.searchRv.visibility = View.GONE
                 } else {
-                    filterList(newText)
-                    binding.searchRv.visibility = View.VISIBLE
+                    if (newText != null && newText.length > 1) {
+                        searchService.getKeyword(newText)
+                        binding.searchRv.visibility = View.VISIBLE
+                    }
                 }
 
                 return true
@@ -58,9 +64,9 @@ class SearchActivity : AppCompatActivity(), SearchTextView {
         var intent = Intent(this, ResultActivity::class.java)
 
         searchResultAdapter.setMyItemClickListener(object : SearchRVAdapter.MyItemClickListener {
-            override fun onItemClick(searchResponse: SearchResponse) {
-                intent.putExtra("search_dong", searchResponse.dong)
-                intent.putExtra("search_full", searchResponse.fullAddress)
+            override fun onItemClick(search: SearchResponse) {
+                intent.putExtra("search_dong", search.dong)
+                intent.putExtra("search_full", search.fullAddress)
                 startActivity(intent)
             }
         })
@@ -70,29 +76,34 @@ class SearchActivity : AppCompatActivity(), SearchTextView {
         }
     }
 
-    private fun filterList(query: String?) {
-        var searchService = SearchService()
-        searchService.setSearchView(this)
+//    private fun filterList(query: String?) {
+//
+//        if (query?.isNotEmpty() == true) {
+//
+//            for (i in addressList) {
+//                if (i.dong.contains(query)) {
+//                    filteredList.add(i)
+//                } else {
+//                    filteredList.remove(i)
+//                }
+//            }
+//
+//            if (filteredList.isNotEmpty()) {
+//                searchResultAdapter.setFilteredList(filteredList)
+//            }
+//        }
+//    }
 
-        if (query?.isNotEmpty() == true) {
-            searchService.getKeyword(query)
-            for (i in addressList) {
-                if (i.dong.contains(query)) {
-                    filteredList.add(i)
-                } else {
-                    filteredList.remove(i)
-                }
-            }
+    override fun onSearchSuccess(response: List<SearchResponse>?) {
+        if (response != null) {
+            if (addressList.isNotEmpty()) addressList.clear()
 
-            if (filteredList.isNotEmpty()) {
-                searchResultAdapter.setFilteredList(filteredList)
+            for (i in response) {
+                addressList.add(i)
             }
+            searchResultAdapter.notifyDataSetChanged()
         }
-    }
-
-    override fun onSearchSuccess(response: SearchResponse) {
-        if (!addressList.contains(response))
-            addressList.add(response)
+        Log.d("SEARCH/SUCCESS", "검색어 리스트를 가져왔습니다.")
     }
 
     override fun onSearchFailure(message: String) {

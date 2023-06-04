@@ -2,6 +2,7 @@ package com.example.capstonedesign2.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.example.capstonedesign2.R
 import com.example.capstonedesign2.data.entities.User
 import com.example.capstonedesign2.databinding.ActivityMainBinding
@@ -14,6 +15,7 @@ import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding : ActivityMainBinding
+    private var gson = Gson()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -24,8 +26,18 @@ class MainActivity : AppCompatActivity() {
         editor.clear()
         editor.commit()
 
-        var user = intent.getStringExtra("user")
-        initBottomNavigation(user.toString())
+        var userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        var userJson = userSpf.getString("User", "")
+
+        if (userJson != null) {
+            if (!userJson.isEmpty()) {
+                var user = gson.fromJson(userJson, User::class.java)
+                initBottomNavigation(user.role)
+                Log.d("accessToken", user.accessToken)
+            } else {
+                initBottomNavigation("General")
+            }
+        }
     }
 
     private fun initBottomNavigation(role: String) { //BottomNavigationView init

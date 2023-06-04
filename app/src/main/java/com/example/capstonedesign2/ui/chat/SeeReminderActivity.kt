@@ -1,47 +1,30 @@
 package com.example.capstonedesign2.ui.chat
 
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.KeyEvent
-import android.view.MotionEvent
-import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.NumberPicker
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.capstonedesign2.R
-import com.example.capstonedesign2.data.entities.Reminder
-import com.example.capstonedesign2.data.remote.KakaoService
-import com.example.capstonedesign2.data.remote.Place
-import com.example.capstonedesign2.data.remote.PlaceSearch
-import com.example.capstonedesign2.data.remote.ResultSearchKeyword
-import com.example.capstonedesign2.databinding.ActivityReminderBinding
+import com.example.capstonedesign2.data.entities.User
+import com.example.capstonedesign2.data.remote.AuthService
+import com.example.capstonedesign2.data.remote.Reminder
+import com.example.capstonedesign2.data.remote.ReminderService
+import com.example.capstonedesign2.data.remote.SeeReminder
 import com.example.capstonedesign2.databinding.ActivitySeereminderBinding
-import com.example.capstonedesign2.ui.map.KaKaoView
+import com.example.capstonedesign2.ui.login.RefreshView
 import com.google.gson.Gson
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
-import java.text.SimpleDateFormat
-import java.util.*
-import javax.microedition.khronos.opengles.GL10
-import kotlin.collections.ArrayList
+import net.daum.mf.map.api.MapView.MapViewEventListener
 
 
-class SeeReminderActivity : AppCompatActivity() {
+class SeeReminderActivity : AppCompatActivity(), MapViewEventListener {
     lateinit var binding: ActivitySeereminderBinding
+    lateinit var accessToken: String
+    lateinit var user: User
     private var gson = Gson()
     lateinit var spf: SharedPreferences
+    lateinit var reminderJson: String
+    lateinit var reminder: Reminder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,13 +32,24 @@ class SeeReminderActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         spf = getSharedPreferences("reminder", MODE_PRIVATE)
-        if (spf != null) {
-            var reminderJson = spf.getString("saveReminder","")
-            var reminder = gson.fromJson(reminderJson, Reminder::class.java)
-            binding.reminderSelectDateTv.text = reminder.date
-            binding.reminderSelectTimeTv.text = reminder.time
-            binding.reminderSelectPlaceTv.text = reminder.place
-            var mapCenter = MapPoint.mapPointWithGeoCoord(reminder.placeLat, reminder.placeLng)
+        reminderJson = spf.getString("seeReminder","").toString()
+        reminder = gson.fromJson(reminderJson, Reminder::class.java)
+        binding.reminderSelectDateTv.text = reminder.date
+        binding.reminderSelectTimeTv.text = reminder.time
+        binding.reminderSelectPlaceTv.text = reminder.place
+
+        var spf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        var userJson = spf.getString("User", "")
+        user = gson.fromJson(userJson, User::class.java)
+        accessToken = user.accessToken
+
+        // 클릭 이벤트 발생 시
+        onClickListener()
+
+    }
+    override fun onMapViewInitialized(p0: MapView?) {
+        if (p0 != null) {
+            var mapCenter = MapPoint.mapPointWithGeoCoord(reminder.latitude.toDouble(), reminder.longitude.toDouble())
             var marker = MapPOIItem()
             marker.apply {
                 tag = reminder.roomId
@@ -63,29 +57,49 @@ class SeeReminderActivity : AppCompatActivity() {
                 markerType = MapPOIItem.MarkerType.RedPin
                 isShowCalloutBalloonOnTouch = false
             }
-            binding.reminderMapview.setMapCenterPointAndZoomLevel(mapCenter, 1, false)
-            binding.reminderMapview.addPOIItem(marker)
+            p0.setMapCenterPointAndZoomLevel(mapCenter, 1, false)
+            p0.addPOIItem(marker)
+            p0.zoomIn(false)
+            p0.zoomOut(false)
         }
+    }
 
-        // 클릭 이벤트 발생 시
-        onClickListener()
+    override fun onMapViewCenterPointMoved(p0: MapView?, p1: MapPoint?) {
 
     }
-    // 클릭 이벤트 함수
+
+    override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {
+
+    }
+
+    override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
+
+    }
+
+    override fun onMapViewDoubleTapped(p0: MapView?, p1: MapPoint?) {
+
+    }
+
+    override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
+
+    }
+
+    override fun onMapViewDragStarted(p0: MapView?, p1: MapPoint?) {
+
+    }
+
+    override fun onMapViewDragEnded(p0: MapView?, p1: MapPoint?) {
+
+    }
+
+    override fun onMapViewMoveFinished(p0: MapView?, p1: MapPoint?) {
+
+    }
+
     private fun onClickListener(){
         // 뒤로 가기 누를 시
         binding.reminderBackIv.setOnClickListener {
             finish()
         }
-    }
-
-    private fun getReminder(): Reminder {
-        val date: String = binding.reminderSelectDateTv.text.toString()
-        val time: String = binding.reminderSelectTimeTv.text.toString()
-        val place: String = binding.reminderSelectPlaceTv.text.toString()
-        val placeLat: Double = spf.getString("reminderPlaceLat", "")!!.toDouble()
-        val placeLng: Double = spf.getString("reminderPlaceLng", "")!!.toDouble()
-
-        return Reminder(0, date, time, place, placeLat, placeLng)
     }
 }

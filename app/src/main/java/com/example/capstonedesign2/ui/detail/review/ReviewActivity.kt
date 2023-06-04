@@ -3,30 +3,47 @@ package com.example.capstonedesign2.ui.detail.review
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import com.example.capstonedesign2.R
-import com.example.capstonedesign2.data.entities.Estate
-import com.example.capstonedesign2.data.entities.Review
+import com.example.capstonedesign2.data.entities.User
+import com.example.capstonedesign2.data.remote.*
 import com.example.capstonedesign2.databinding.ActivityReviewBinding
+import com.example.capstonedesign2.ui.detail.ReviewView
+import com.example.capstonedesign2.ui.login.RefreshView
 import com.google.gson.Gson
 
-class ReviewActivity : AppCompatActivity() {
+class ReviewActivity : AppCompatActivity(), ReviewView, RefreshView {
     lateinit var binding: ActivityReviewBinding
+    lateinit var accessToken: String
+    lateinit var user: User
     private var gson = Gson()
-    var period = ""
-    var age = ""
-    var gender = ""
-    var public_rate = 0
-    var ambient_rate = 0
-    var lived_rate = 0
+    private var reviewView = ReviewService()
+    private var authService = AuthService()
+    private var period: String = ""
+    private var age: String = ""
+    private var gender: String = ""
+    private var publicRate = 0
+    private var ambientRate = 0
+    private var livedRate = 0
+    private var roomId = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        roomId = intent.getIntExtra("room", 0)
+        Log.d("RoomID", roomId.toString())
+
+        var spf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        var userJson = spf.getString("User", "")
+        user = gson.fromJson(userJson, User::class.java)
+        accessToken = user.accessToken
+        reviewView.setReviewView(this)
+        authService.setRefreshView(this)
 
         onClickListener()
     }
@@ -58,7 +75,7 @@ class ReviewActivity : AppCompatActivity() {
 
     private fun onClickListener() {
         binding.backIv.setOnClickListener {
-            onBackPressed()
+            finishAndRemoveTask()
         }
 
         binding.live5Tv.setOnClickListener {
@@ -69,7 +86,8 @@ class ReviewActivity : AppCompatActivity() {
             binding.live1Tv.setBackgroundResource(R.drawable.round_shape)
             binding.liveCurrentTv.setBackgroundResource(R.drawable.round_shape)
 
-            period = binding.live5Tv.text.toString()
+            period = "5"
+
         }
 
         binding.live4Tv.setOnClickListener {
@@ -80,7 +98,8 @@ class ReviewActivity : AppCompatActivity() {
             binding.live1Tv.setBackgroundResource(R.drawable.round_shape)
             binding.liveCurrentTv.setBackgroundResource(R.drawable.round_shape)
 
-            period = binding.live4Tv.text.toString()
+            period = "4"
+
         }
 
         binding.live3Tv.setOnClickListener {
@@ -91,7 +110,8 @@ class ReviewActivity : AppCompatActivity() {
             binding.live1Tv.setBackgroundResource(R.drawable.round_shape)
             binding.liveCurrentTv.setBackgroundResource(R.drawable.round_shape)
 
-            period = binding.live3Tv.text.toString()
+            period = "3"
+
         }
 
         binding.live2Tv.setOnClickListener {
@@ -102,7 +122,8 @@ class ReviewActivity : AppCompatActivity() {
             binding.live1Tv.setBackgroundResource(R.drawable.round_shape)
             binding.liveCurrentTv.setBackgroundResource(R.drawable.round_shape)
 
-            period = binding.live2Tv.text.toString()
+            period = "2"
+
         }
 
         binding.live1Tv.setOnClickListener {
@@ -113,7 +134,8 @@ class ReviewActivity : AppCompatActivity() {
             binding.live1Tv.setBackgroundResource(R.drawable.gray_round_shape)
             binding.liveCurrentTv.setBackgroundResource(R.drawable.round_shape)
 
-            period = binding.live1Tv.text.toString()
+            period = "1"
+
         }
 
         binding.liveCurrentTv.setOnClickListener {
@@ -124,7 +146,8 @@ class ReviewActivity : AppCompatActivity() {
             binding.live1Tv.setBackgroundResource(R.drawable.round_shape)
             binding.liveCurrentTv.setBackgroundResource(R.drawable.gray_round_shape)
 
-            period = binding.liveCurrentTv.text.toString()
+            period = "0"
+
         }
 
         binding.studentTv.setOnClickListener {
@@ -133,6 +156,7 @@ class ReviewActivity : AppCompatActivity() {
             binding.noTv.setBackgroundResource(R.drawable.round_shape)
 
             age = binding.studentTv.text.toString()
+
         }
 
         binding.workerTv.setOnClickListener {
@@ -155,14 +179,14 @@ class ReviewActivity : AppCompatActivity() {
             binding.manTv.setBackgroundResource(R.drawable.gray_round_shape)
             binding.womanTv.setBackgroundResource(R.drawable.round_shape)
 
-            gender = binding.manTv.text.toString()
+            gender = "male"
         }
 
         binding.womanTv.setOnClickListener {
             binding.manTv.setBackgroundResource(R.drawable.round_shape)
             binding.womanTv.setBackgroundResource(R.drawable.gray_round_shape)
 
-            gender = binding.womanTv.text.toString()
+            gender = "female"
         }
 
         binding.publicStar1Iv.setOnClickListener {
@@ -172,7 +196,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.publicStar4Iv.setColorFilter(Color.parseColor("#BBBBBB"))
             binding.publicStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            public_rate = 1
+            publicRate = 2
+
+            writeAll()
         }
 
         binding.publicStar2Iv.setOnClickListener {
@@ -182,7 +208,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.publicStar4Iv.setColorFilter(Color.parseColor("#BBBBBB"))
             binding.publicStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            public_rate = 2
+            publicRate = 4
+
+            writeAll()
         }
 
         binding.publicStar3Iv.setOnClickListener {
@@ -192,7 +220,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.publicStar4Iv.setColorFilter(Color.parseColor("#BBBBBB"))
             binding.publicStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            public_rate = 3
+            publicRate = 6
+
+            writeAll()
         }
 
         binding.publicStar4Iv.setOnClickListener {
@@ -202,7 +232,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.publicStar4Iv.setColorFilter(Color.parseColor("#FD7E36"))
             binding.publicStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            public_rate = 4
+            publicRate = 8
+
+            writeAll()
         }
 
         binding.publicStar5Iv.setOnClickListener {
@@ -212,7 +244,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.publicStar4Iv.setColorFilter(Color.parseColor("#FD7E36"))
             binding.publicStar5Iv.setColorFilter(Color.parseColor("#FD7E36"))
 
-            public_rate = 5
+            publicRate = 10
+
+            writeAll()
         }
 
         binding.ambientStar1Iv.setOnClickListener {
@@ -222,7 +256,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.ambientStar4Iv.setColorFilter(Color.parseColor("#BBBBBB"))
             binding.ambientStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            ambient_rate = 1
+            ambientRate = 2
+
+            writeAll()
         }
 
         binding.ambientStar2Iv.setOnClickListener {
@@ -232,7 +268,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.ambientStar4Iv.setColorFilter(Color.parseColor("#BBBBBB"))
             binding.ambientStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            ambient_rate = 2
+            ambientRate = 4
+
+            writeAll()
         }
 
         binding.ambientStar3Iv.setOnClickListener {
@@ -242,7 +280,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.ambientStar4Iv.setColorFilter(Color.parseColor("#BBBBBB"))
             binding.ambientStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            ambient_rate = 3
+            ambientRate = 6
+
+            writeAll()
         }
 
         binding.ambientStar4Iv.setOnClickListener {
@@ -252,7 +292,7 @@ class ReviewActivity : AppCompatActivity() {
             binding.ambientStar4Iv.setColorFilter(Color.parseColor("#FD7E36"))
             binding.ambientStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            ambient_rate = 4
+            ambientRate = 8
         }
 
         binding.ambientStar5Iv.setOnClickListener {
@@ -262,7 +302,7 @@ class ReviewActivity : AppCompatActivity() {
             binding.ambientStar4Iv.setColorFilter(Color.parseColor("#FD7E36"))
             binding.ambientStar5Iv.setColorFilter(Color.parseColor("#FD7E36"))
 
-            ambient_rate = 5
+            ambientRate = 10
         }
 
         binding.liveStar1Iv.setOnClickListener {
@@ -272,7 +312,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.liveStar4Iv.setColorFilter(Color.parseColor("#BBBBBB"))
             binding.liveStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            lived_rate = 1
+            livedRate = 2
+
+            writeAll()
         }
 
         binding.liveStar2Iv.setOnClickListener {
@@ -282,7 +324,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.liveStar4Iv.setColorFilter(Color.parseColor("#BBBBBB"))
             binding.liveStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            lived_rate = 2
+            livedRate = 4
+
+            writeAll()
         }
 
         binding.liveStar3Iv.setOnClickListener {
@@ -292,7 +336,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.liveStar4Iv.setColorFilter(Color.parseColor("#BBBBBB"))
             binding.liveStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            lived_rate = 3
+            livedRate = 6
+
+            writeAll()
         }
 
         binding.liveStar4Iv.setOnClickListener {
@@ -302,7 +348,9 @@ class ReviewActivity : AppCompatActivity() {
             binding.liveStar4Iv.setColorFilter(Color.parseColor("#FD7E36"))
             binding.liveStar5Iv.setColorFilter(Color.parseColor("#BBBBBB"))
 
-            lived_rate = 4
+            livedRate = 8
+
+            writeAll()
         }
 
         binding.liveStar5Iv.setOnClickListener {
@@ -312,33 +360,110 @@ class ReviewActivity : AppCompatActivity() {
             binding.liveStar4Iv.setColorFilter(Color.parseColor("#FD7E36"))
             binding.liveStar5Iv.setColorFilter(Color.parseColor("#FD7E36"))
 
-            lived_rate = 5
-        }
+            livedRate = 10
 
-        if (period.isNotEmpty() && age.isNotEmpty() && gender.isNotEmpty()) {
-            binding.nextTv.setTextColor(Color.BLACK)
-            binding.nextIv.setColorFilter(Color.BLACK)
-            binding.nextLl.setOnClickListener {
-                binding.frontPage.visibility = View.GONE
-                binding.secondPage.visibility = View.VISIBLE
-            }
+            writeAll()
         }
-
-        if (public_rate != 0 && ambient_rate != 0 && lived_rate != 0 && binding.reviewEt.text.isNotEmpty()) {
-            binding.doneTv.setTextColor(Color.BLACK)
-            binding.doneIv.setColorFilter(Color.BLACK)
-            binding.doneLl.setOnClickListener {
-//                saveReview()
-                finish()
-                Toast.makeText(this, "리뷰 등록 완료😊", Toast.LENGTH_LONG)
-            }
-        }
-
     }
 
-//    private fun saveReview(): Review {
-//        val estate = intent.getStringExtra("estate")
-//        val estateJson = gson.fromJson(estate, Estate::class.java)
-//        return Review("mm", "0", System.currentTimeMillis(), period, age, gender, public_rate, ambient_rate, lived_rate, binding.reviewEt.text.toString())
-//    }
+    private fun writeAll() {
+        if (period.isNotEmpty() && age.isNotEmpty() && gender.isNotEmpty() &&
+            publicRate > 0 && ambientRate > 0 && livedRate > 0) {
+            binding.doneTv.setTextColor(Color.parseColor("#754C24"))
+            binding.doneTv.setBackgroundColor(Color.parseColor("#FDC536"))
+            binding.doneTv.setOnClickListener {
+                reviewView.addReview(
+                    accessToken,
+                    ReviewRequest(
+                        roomId,
+                        period,
+                        age,
+                        gender,
+                        publicRate,
+                        ambientRate,
+                        livedRate,
+                        binding.reviewEt.text.toString()
+                    )
+                )
+            }
+        } else {
+            binding.doneTv.setTextColor(Color.parseColor("#666666"))
+            binding.doneTv.setBackgroundColor(Color.parseColor("#C8C8C8"))
+
+            binding.doneTv.setOnClickListener {
+                Toast.makeText(this, "아직 작성되지 않은 부분이 있습니다.", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    override fun onAddReviewSuccess(message: String) {
+        Toast.makeText(this, "리뷰 등록 완료😊", Toast.LENGTH_LONG).show()
+        Log.d("SaveReview/SUCCESS", "리뷰 등록/$message")
+        finish()
+    }
+
+    override fun onAddReviewFailure(code: Int, message: String) {
+        when (code) {
+            401 -> {
+                Log.d("GetReview/FAILURE", "$code/$message")
+                authService.refresh(accessToken, RefreshRequest(user.refreshToken))
+            }
+            403 -> Log.d("GetReview/FAILURE", "$code/$message")
+        }
+    }
+
+    override fun onReviewSuccess(response: ArrayList<Review>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onReviewFailure(code: Int, message: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDeleteReviewSuccess(message: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDeleteReviewFailure(code: Int, message: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
+        val updateUser = User(accessToken, refreshToken, user.nickname, null, "General")
+        val gson = Gson()
+        val userJson = gson.toJson(updateUser)
+        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val editor = userSpf.edit()
+        editor.apply {
+            putString("User", userJson)
+        }
+
+        editor.commit()
+
+        reviewView.addReview(
+            accessToken,
+            ReviewRequest(
+                roomId,
+                period,
+                age,
+                gender,
+                publicRate,
+                ambientRate,
+                livedRate,
+                binding.reviewEt.text.toString()
+            )
+        )
+
+        Log.d("ReAddReview", "${updateUser.accessToken}/$roomId")
+    }
+
+    override fun onRefreshFailure(code: Int, message: String) {
+        when (code) {
+            401 -> {
+                Log.d("Refresh/Failure", "$code/$message")
+                authService.refresh(accessToken, RefreshRequest(user.refreshToken))
+            }
+            403 -> Log.d("Refresh/Failure", "$code/$message")
+        }
+    }
 }

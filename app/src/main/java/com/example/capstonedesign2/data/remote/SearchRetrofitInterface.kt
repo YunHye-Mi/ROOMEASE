@@ -11,9 +11,9 @@ import retrofit2.http.Query
 interface SearchRetrofitInterface {
     @Headers("Content-Type: application/json")
     @GET("/api/keyword")
-    fun getKeyword(@Query("word") query: String): Call<SearchResponse>
+    fun getKeyword(@Query("word") query: String): Call<List<SearchResponse>>
 
     @Headers("Content-Type: application/json")
     @GET("/api/list")
-    fun getResultList(@Query("address") address: String, @Query("count") count: Int, @Query("sort") sort: Int): Call<ResultResponse>
+    fun getResultList(@Query("addr") address: String, @Query("count") count: Int?, @Query("sort") sort: Int?): Call<List<ResultResponse>>
 }
