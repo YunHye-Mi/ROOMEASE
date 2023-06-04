@@ -35,7 +35,7 @@ data class ChatRoomList(
 
 data class ChatRoomResult(
     @SerializedName("id") val id: Int,
-    @SerializedName("broker") val broker: String,
+    @SerializedName("opponent") val broker: String,
     @SerializedName("lastMessage") val lastMessage: String?,
     @SerializedName("lastMessageTimestamp") val lastMessageTimestamp: String
 )
