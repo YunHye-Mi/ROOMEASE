@@ -42,16 +42,6 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bookmarkOn = intent.getBooleanExtra("bookmarkOn", false)
-
-        if (bookmarkOn) {
-            binding.bookmarkOffIv.visibility = View.GONE
-            binding.bookmarkOnIv.visibility = View.VISIBLE
-        } else {
-            binding.bookmarkOffIv.visibility = View.VISIBLE
-            binding.bookmarkOnIv.visibility = View.GONE
-        }
-
         binding.brokerRateIv.visibility = View.GONE
 
         roomId = intent.getStringExtra("roomId").toString()
@@ -66,12 +56,30 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
         }
         editor.commit()
 
+        val bookmarkOn = intent.getBooleanExtra("bookmarkOn", false)
+        val registerOn = intent.getBooleanExtra("registerEstateOn", false)
+
         if (user.role == "General") {
             binding.bookmarkOnIv.setImageResource(R.drawable.baseline_favorite_24)
             binding.bookmarkOffIv.setImageResource(R.drawable.outline_favorite_border_24)
+            if (bookmarkOn) {
+                binding.bookmarkOffIv.visibility = View.GONE
+                binding.bookmarkOnIv.visibility = View.VISIBLE
+            } else {
+                binding.bookmarkOffIv.visibility = View.VISIBLE
+                binding.bookmarkOnIv.visibility = View.GONE
+            }
         } else {
             binding.bookmarkOnIv.setImageResource(R.drawable.baseline_task_alt_24)
             binding.bookmarkOffIv.setImageResource(R.drawable.baseline_add_task_24)
+            if (registerOn == true) {
+                binding.bookmarkOffIv.visibility = View.GONE
+                binding.bookmarkOnIv.visibility = View.VISIBLE
+            } else {
+                binding.bookmarkOffIv.visibility = View.VISIBLE
+                binding.bookmarkOnIv.visibility = View.GONE
+            }
+
         }
 
         binding.backIv.setOnClickListener {

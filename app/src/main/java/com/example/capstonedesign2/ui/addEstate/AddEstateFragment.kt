@@ -50,6 +50,7 @@ class AddEstateFragment() : Fragment(), BrokerView, RefreshView {
         addEstateRVAdapter.setMyItemClickListener(object : AddEstateRVAdapter.MyItemClickListener {
             override fun onItemClick(estateInfo: EstateInfo) {
                 intent.putExtra("roomId", estateInfo.id.toString())
+                intent.putExtra("registerEstateOn", true)
                 startActivity(intent)
             }
         })

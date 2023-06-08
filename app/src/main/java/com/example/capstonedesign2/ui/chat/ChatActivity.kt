@@ -18,6 +18,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import okhttp3.*
 import ua.naiksoftware.stomp.Stomp
+import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.StompCommand
 import ua.naiksoftware.stomp.dto.StompHeader
 import ua.naiksoftware.stomp.dto.StompMessage
@@ -33,7 +34,7 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
     private val chatView = ChatService()
     private val authService = AuthService()
     lateinit var user: User
-    lateinit var sender: Disposable
+    lateinit var stompClient: StompClient
     private val reminderService = ReminderService()
 
     @SuppressLint("NotifyDataSetChanged")
@@ -45,7 +46,6 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
         chatView.setChatView(this)
         reminderService.setReminderView(this)
 
-        sender = Disposables.disposed()
         val spf = getSharedPreferences("reminder", MODE_PRIVATE)
         if (spf != null) {
             binding.noticeLl.visibility = View.VISIBLE
@@ -69,7 +69,7 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
 
         val url = "ws://3.39.130.73:8080/ws-stomp/websocket"
 
-        val stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, url)
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, url)
         val stompHeaders = StompHeader("Authorization", "Bearer ${user.accessToken}")
         val headers = mutableListOf<StompHeader>(stompHeaders)
         stompClient.connect(headers)
@@ -119,6 +119,12 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
         super.onStart()
 
         reminderService.getReminder(user.accessToken, roomId.toLong())
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        stompClient.disconnect()
     }
 
     private fun onClickListener() {
