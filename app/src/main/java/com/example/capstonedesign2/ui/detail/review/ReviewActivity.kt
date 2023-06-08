@@ -406,7 +406,7 @@ class ReviewActivity : AppCompatActivity(), ReviewView, RefreshView {
         when (code) {
             401 -> {
                 Log.d("GetReview/FAILURE", "$code/$message")
-                authService.refresh(accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("GetReview/FAILURE", "$code/$message")
         }
@@ -429,7 +429,7 @@ class ReviewActivity : AppCompatActivity(), ReviewView, RefreshView {
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        val updateUser = User(accessToken, refreshToken, user.nickname, null, "General")
+        val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, user.role)
         val gson = Gson()
         val userJson = gson.toJson(updateUser)
         val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
@@ -461,7 +461,7 @@ class ReviewActivity : AppCompatActivity(), ReviewView, RefreshView {
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }

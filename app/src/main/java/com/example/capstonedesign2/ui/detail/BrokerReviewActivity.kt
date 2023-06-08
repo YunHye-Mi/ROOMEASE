@@ -255,7 +255,7 @@ class BrokerReviewActivity : AppCompatActivity(), BrokerReviewView, RefreshView 
         when (code) {
             401 -> {
                 Log.d("GetReview/FAILURE", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("GetReview/FAILURE", "$code/$message")
         }
@@ -270,7 +270,7 @@ class BrokerReviewActivity : AppCompatActivity(), BrokerReviewView, RefreshView 
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        val updateUser = User(accessToken, refreshToken, user.nickname, null, "General")
+        val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, user.role)
         val gson = Gson()
         val userJson = gson.toJson(updateUser)
         val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
@@ -279,9 +279,9 @@ class BrokerReviewActivity : AppCompatActivity(), BrokerReviewView, RefreshView 
             putString("User", userJson)
         }
 
-        editor.commit()
+        editor.apply()
 
-//        reviewView.addBrokerReview(user.accessToken, 브로커 아이디 추가, BrokerReview(kind_rate, response_rate, reliability_rate))
+        reviewView.addBrokerReview(user.accessToken, brokerId, BrokerReview(kindnessRate, responseRate, reliabilityRate))
 
         Log.d("ReGetReview", "${updateUser.accessToken}/${updateUser.role}")
     }
@@ -290,7 +290,7 @@ class BrokerReviewActivity : AppCompatActivity(), BrokerReviewView, RefreshView 
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(user.refreshToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }

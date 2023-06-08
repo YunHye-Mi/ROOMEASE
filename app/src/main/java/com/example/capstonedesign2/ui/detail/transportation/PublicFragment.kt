@@ -25,19 +25,7 @@ class PublicFragment(val room: Room) : Fragment() {
 
         val subwayRVAdapter = SubwayRVAdapter(room.nearSubway)
         binding.subwayRv.adapter = subwayRVAdapter
-        binding.subwayRv.layoutManager = GridLayoutManager(this.context, 2, GridLayoutManager.VERTICAL, false)
-
-        val distanceList = ArrayList<Environment>()
-
-        for (i in room.environment) {
-            if (i.type == "지하철역" || i.type == "버스정류장") {
-                distanceList.add(i)
-            }
-        }
-
-        val distanceRVAdapter = DistanceRVAdapter(distanceList)
-        binding.distanceRv.adapter = distanceRVAdapter
-        binding.distanceRv.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
+        binding.subwayRv.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
 
         binding.root.requestLayout()
 

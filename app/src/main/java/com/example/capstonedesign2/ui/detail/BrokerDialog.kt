@@ -68,13 +68,13 @@ class BrokerDialog(context: Context, val id: Int) : Dialog(context), ChatView, B
         when (code) {
             401 -> {
                 Log.d("CHAT/FAILURE", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("CHAT/FAILURE", "$code/$message")
         }
     }
 
-    override fun onChatSuccess(roomResult: ArrayList<ChatRoomList>?) {
+    override fun onChatSuccess(roomResult: ArrayList<ChatRoomResult>?) {
 
     }
 
@@ -82,11 +82,7 @@ class BrokerDialog(context: Context, val id: Int) : Dialog(context), ChatView, B
 
     }
 
-    override fun onBeforeChatSuccess(chatList: ArrayList<SubscribeChatResponse>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onRefreshFailure(code: Int, message: String) {
+    override fun onBeforeChatSuccess(chatList: ArrayList<ChatMessage>?) {
         TODO("Not yet implemented")
     }
 
@@ -110,6 +106,32 @@ class BrokerDialog(context: Context, val id: Int) : Dialog(context), ChatView, B
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        TODO("Not yet implemented")
+        if (isShowing) {
+            val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, user.role)
+            val gson = Gson()
+            val userJson = gson.toJson(updateUser)
+            val userSpf = context.getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
+            val editor = userSpf.edit()
+            editor.apply {
+                putString("User", userJson)
+            }
+
+            editor.apply()
+
+            chatView.createChatRoom(user.accessToken, BrokerIdRequest(id))
+
+            Log.d("ReGetReview", "${updateUser.accessToken}/${updateUser.role}")
+
+        }
+    }
+
+    override fun onRefreshFailure(code: Int, message: String) {
+        when (code) {
+            401 -> {
+                Log.d("Refresh/Failure", "$code/$message")
+                authService.refresh(RefreshRequest(user.refreshToken))
+            }
+            403 -> Log.d("Refresh/Failure", "$code/$message")
+        }
     }
 }

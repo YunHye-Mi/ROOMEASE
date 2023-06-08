@@ -51,25 +51,23 @@ class AuthService() {
         })
     }
 
-    fun refresh(authorization: String, refreshRequest: RefreshRequest) {
+    fun refresh(refreshRequest: RefreshRequest) {
         val authService = getRetrofit().create(AuthRetrofitInterface::class.java)
-        authService.refresh("Bearer $authorization", refreshRequest).enqueue(object : Callback<AuthResponse> {
+        authService.refresh(refreshRequest).enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 if (response.isSuccessful) {
                     var resp: AuthResponse? = response.body()
                     if (resp != null) {
                         if (resp.success) {
-                            loginView.onLoginSuccess(
+                            refreshView.onRefreshSuccess(
                                 resp.accessToken,
                                 resp.refreshToken
                             )
-                        } else {
-                            when (resp.status) {
-                                401 -> refreshView.onRefreshFailure(resp.status, resp.message)
-                                403 -> refreshView.onRefreshFailure(resp.status, resp.message)
-                            }
                         }
                     }
+                }
+                else {
+                    refreshView.onRefreshFailure(response.code(), response.message())
                 }
             }
 
@@ -89,14 +87,11 @@ class AuthService() {
                     if (resp != null) {
                         if (resp.success) {
                             registerView.onRegisterSuccess(resp.message, resp.data.isBroker)
-                        } else {
-                            when (resp.status) {
-                                401 -> registerView.onRegisterFailure(resp.status, resp.message)
-                                403 -> registerView.onRegisterFailure(resp.status, resp.message)
-                            }
                         }
-
                     }
+                }
+                else {
+                    registerView.onRegisterFailure(response.code(), response.message())
                 }
             }
 

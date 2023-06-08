@@ -131,7 +131,7 @@ class ReviewFragment() : Fragment(), ReviewView, RefreshView {
         when (code) {
             401 -> {
                 Log.d("GetReview/FAILURE", "$code/$message")
-                authService.refresh(accessToken, RefreshRequest(refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("GetReview/FAILURE", "$code/$message")
         }
@@ -148,35 +148,37 @@ class ReviewFragment() : Fragment(), ReviewView, RefreshView {
         when (code) {
             401 -> {
                 Log.d("DeleteReview/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("DeleteReview/Failure", "$code/$message")
         }
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        val updateUser = User(accessToken, refreshToken, user.nickname, null, "General")
-        val gson = Gson()
-        val userJson = gson.toJson(updateUser)
-        val userSpf = this.requireContext().getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
-        val editor = userSpf.edit()
-        editor.apply {
-            putString("User", userJson)
+        if (isAdded) {
+            val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, user.role)
+            val gson = Gson()
+            val userJson = gson.toJson(updateUser)
+            val userSpf = this.requireContext().getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
+            val editor = userSpf.edit()
+            editor.apply {
+                putString("User", userJson)
+            }
+
+            editor.commit()
+
+            var roomId = spf.getInt("roomId", 0 )
+            reviewView.getReviews(accessToken, roomId)
+
+            Log.d("ReGetReview", "${updateUser.accessToken}/${updateUser.role}")
         }
-
-        editor.commit()
-
-        var roomId = spf.getInt("roomId", 0 )
-        reviewView.getReviews(accessToken, roomId)
-
-        Log.d("ReGetReview", "${updateUser.accessToken}/${updateUser.role}")
     }
 
     override fun onRefreshFailure(code: Int, message: String) {
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }

@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,19 +29,9 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView.MapViewEventListener
 import net.daum.mf.map.api.MapView.POIItemEventListener
 
-class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, POIItemEventListener {
+class MapFragment() : Fragment() , MapViewEventListener, MapDataView, KaKaoView, POIItemEventListener {
     lateinit var binding: FragmentMapBinding
     lateinit var spf: SharedPreferences
-    var rent: String = ""
-    var area_min: Double? = 0.0
-    var area_max: Double? = 0.0
-    var price_min_d: Int? = 0
-    var price_max_d: Int? = 0
-    var price_min_a: Double? = 0.0
-    var price_max_a: Double? = 0.0
-    var price_min_m: Double? = 0.0
-    var price_max_m: Double? = 0.0
-    var floor: String =""
     private var markerList = ArrayList<MapPOIItem>()
     private var kakaoView = KaKaoService()
     private var mapDataView = RoomService()
@@ -52,6 +43,7 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
     private var infraStore = false
     private var infraConvenience = false
     private var infraFitness = false
+    private var changeZoom = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,13 +69,60 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
 
     override fun onStart() {
         super.onStart()
+        setFilter()
         binding.mapView.setMapViewEventListener(this)
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            for (i in binding.mapView.poiItems) {
+                binding.mapView.removePOIItem(i)
+            }
 
-        setFilter()
+            Log.d("MapRect", "${binding.mapView.mapPointBounds.bottomLeft.mapPointGeoCoord.longitude},${binding.mapView.mapPointBounds.bottomLeft.mapPointGeoCoord.latitude}" +
+                    ",${binding.mapView.mapPointBounds.topRight.mapPointGeoCoord.longitude},${binding.mapView.mapPointBounds.topRight.mapPointGeoCoord.latitude}")
+
+            val filter: Filter = setFilter()
+            val minRent = filter.minRent
+            val maxRent = filter.maxRent
+            val type = filter.type
+            val minSize = filter.minSize
+            val maxSize = filter.maxSize
+            val minDeposit = filter.minDeposit
+            val maxDeposit = filter.maxDeposit
+            val minManage = filter.minManage
+            val maxManage = filter.maxManage
+            val minFloor = filter.minFloor
+            val maxFloor = filter.maxFloor
+
+            Log.d("Filter", "minRent: $minRent, maxRent: $maxRent, type: $type, minSize: $minSize, maxSize: $maxSize," +
+                    "minDeposit: $minDeposit, maxDeposit: $maxDeposit, minManage: $minManage, maxManage: $maxManage, minFloor: $minFloor, maxFloor: $maxFloor")
+
+            if (minRent != null && maxRent != null && minSize != null && maxSize != null && minDeposit != null
+                && maxDeposit != null && minManage != null && maxManage != null
+
+            ) {
+                mapDataView.getZoomOut(
+                    binding.mapView.mapPointBounds.bottomLeft.mapPointGeoCoord.latitude,
+                    binding.mapView.mapPointBounds.bottomLeft.mapPointGeoCoord.longitude,
+                    binding.mapView.mapPointBounds.topRight.mapPointGeoCoord.latitude,
+                    binding.mapView.mapPointBounds.topRight.mapPointGeoCoord.longitude,
+                    zoomin = 0,
+                    minRent,
+                    maxRent,
+                    type,
+                    minSize,
+                    maxSize,
+                    minDeposit,
+                    maxDeposit,
+                    minManage,
+                    maxManage,
+                    minFloor,
+                    maxFloor
+                )
+            }
+        }
     }
 
     override fun onMapViewInitialized(p0: MapView?) {
@@ -233,8 +272,6 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
                             ",${p0.mapPointBounds.topRight.mapPointGeoCoord.longitude},${p0.mapPointBounds.topRight.mapPointGeoCoord.latitude}"
                 )
             }else {
-                p0.removeAllPOIItems()
-
                 val filter = setFilter()
                 val minRent = filter.minRent
                 val maxRent = filter.maxRent
@@ -252,6 +289,7 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
                         "minDeposit: $minDeposit, maxDeposit: $maxDeposit, minManage: $minManage, maxManage: $maxManage, minFloor: $minFloor, maxFloor: $maxFloor")
 
                 if (p0.zoomLevel in 3..4) {
+                    p0.removeAllPOIItems()
 
                     if (minRent != null && maxRent != null && minSize != null && maxSize != null && minDeposit != null
                         && maxDeposit != null && minManage != null && maxManage != null
@@ -279,10 +317,12 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
                 }
                 // Zoom Level이 1~2인 경우
                 else if (p0.zoomLevel <= 2) {
+                    p0.removeAllPOIItems()
 
                     if (minRent != null && maxRent != null && minSize != null && maxSize != null && minDeposit != null
                         && maxDeposit != null && minManage != null && maxManage != null
                     ) {
+
                         mapDataView.getZoomIn(
                             p0.mapPointBounds.bottomLeft.mapPointGeoCoord.latitude,
                             p0.mapPointBounds.bottomLeft.mapPointGeoCoord.longitude,
@@ -405,7 +445,6 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
                             ",${p0.mapPointBounds.topRight.mapPointGeoCoord.longitude},${p0.mapPointBounds.topRight.mapPointGeoCoord.latitude}"
                 )
             } else {
-                p0.removeAllPOIItems()
 
                 val filter = setFilter()
                 val minRent = filter.minRent
@@ -423,12 +462,16 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
                 Log.d("Filter", "minRent: $minRent, maxRent: $maxRent, type: $type, minSize: $minSize, maxSize: $maxSize," +
                         "minDeposit: $minDeposit, maxDeposit: $maxDeposit, minManage: $minManage, maxManage: $maxManage, minFloor: $minFloor, maxFloor: $maxFloor")
 
+
                 if (p1 in 3..4) {
+                    p0.removeAllPOIItems()
+
 
                     if (minRent != null && maxRent != null && minSize != null && maxSize != null && minDeposit != null
                         && maxDeposit != null && minManage != null && maxManage != null
 
                     ) {
+
                         mapDataView.getZoomOut(
                             p0.mapPointBounds.bottomLeft.mapPointGeoCoord.latitude,
                             p0.mapPointBounds.bottomLeft.mapPointGeoCoord.longitude,
@@ -452,10 +495,12 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
                 }
                 // Zoom Level이 1~2인 경우
                 else if (p1 <= 2) {
+                    p0.removeAllPOIItems()
 
                     if (minRent != null && maxRent != null && minSize != null && maxSize != null && minDeposit != null
                         && maxDeposit != null && minManage != null && maxManage != null
                     ) {
+
                         mapDataView.getZoomIn(
                             p0.mapPointBounds.bottomLeft.mapPointGeoCoord.latitude,
                             p0.mapPointBounds.bottomLeft.mapPointGeoCoord.longitude,
@@ -1192,16 +1237,16 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
     }
 
     private fun setFilter(): Filter {
-        rent = spf.getString("rent", "").toString()
-        area_min = spf.getInt("area_min", 0).toDouble()
-        area_max = spf.getInt("area_max", 0).toDouble()
-        price_min_d = spf.getInt("price_min_d", 0)
-        price_max_d = spf.getInt("price_max_d", 0)
-        price_min_m = spf.getInt("price_min_m", 0).toDouble()
-        price_max_m = spf.getInt("price_max_m", 0).toDouble()
-        price_min_a = spf.getInt("price_min_a", 0).toDouble()
-        price_max_a = spf.getInt("price_max_a", 0).toDouble()
-        floor = spf.getString("floor", "").toString()
+        val rent = spf.getString("rent", "").toString()
+        val area_min = spf.getInt("area_min", 0).toDouble()
+        val area_max = spf.getInt("area_max", 0).toDouble()
+        val price_min_d = spf.getInt("price_min_d", 0)
+        val price_max_d = spf.getInt("price_max_d", 0)
+        val price_min_m = spf.getInt("price_min_m", 0).toDouble()
+        val price_max_m = spf.getInt("price_max_m", 0).toDouble()
+        val price_min_a = spf.getInt("price_min_a", 0).toDouble()
+        val price_max_a = spf.getInt("price_max_a", 0).toDouble()
+        val floor = spf.getString("floor", "").toString()
 
         var rentType = -1
         if (rent != null) {
@@ -1241,6 +1286,7 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
         var maxRent = 400000.0
         var minManage = 0.0
         var maxManage = 9999.0
+
         if (price_min_d != null && price_max_d != null && price_min_m != null && price_max_m != null && price_min_a != null && price_max_a != null){
             if (rent == "전세") {
                 if (price_min_d != 0 && price_max_d != 0) {
@@ -1350,13 +1396,14 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
             var mapMarker = MapPOIItem()
             mapMarker.apply {
                 itemName = i.dongName
-                tag = i.roomNum
+                tag = i.ids.last().toInt()
                 mapPoint = MapPoint.mapPointWithGeoCoord(i.lat, i.lng)
                 markerType = MapPOIItem.MarkerType.CustomImage
                 customImageBitmap = Bitmap.createBitmap(viewConvertToBitmapZoomOut(i.dongName, i.minPrice, i.roomNum))
                 isShowCalloutBalloonOnTouch = false
             }
             binding.mapView.addPOIItem(mapMarker)
+
             Log.d("ZoomOUTData", i.dongName)
         }
         binding.mapView.invalidate()
@@ -1379,6 +1426,7 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
                 isShowCalloutBalloonOnTouch = false
             }
             binding.mapView.addPOIItem(mapMarker)
+
             Log.d("ZoomINData", i.id)
         }
         binding.mapView.invalidate()
@@ -1432,7 +1480,7 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
         val zoomInIntent = Intent(this.context, DetailActivity::class.java)
         if (p0 != null && p1 !== null) {
             if (p0.zoomLevel in 3..4) {
-                zoomOutIntent.putExtra("search_full", p1.itemName)
+//                zoomOutIntent.putExtra("search_full", p1.itemName)
 //                startActivity(zoomOutIntent)
             } else if (p0.zoomLevel <= 2) {
                 zoomInIntent.putExtra("roomId", p1.tag.toString())
@@ -1442,6 +1490,7 @@ class MapFragment() : Fragment(), MapViewEventListener, MapDataView, KaKaoView, 
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?) {
 
     }

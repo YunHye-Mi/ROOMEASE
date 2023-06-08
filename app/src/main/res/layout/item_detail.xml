@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
@@ -18,8 +18,9 @@
         app:layout_constraintTop_toTopOf="parent">
         <ImageView
             android:id="@+id/item_iv"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/outline_directions_bus_24"/>
         <TextView
             android:id="@+id/item_tv"
@@ -32,5 +33,144 @@
             android:layout_marginStart="10dp"
             android:textAppearance="@style/more_text" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/distance_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_ll">
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/baseline_my_location_24"/>
+        <TextView
+            android:id="@+id/distance_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NM/N분"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeMaxTextSize="20sp"
+            android:textSize="16sp"
+            android:layout_marginStart="10dp"
+            android:textAppearance="@style/more_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/go_to_work_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/distance_ll">
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/outline_people_24"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="출근시간 혼잡도 | "
+            android:textAppearance="@style/more_text"/>
+        <TextView
+            android:id="@+id/go_to_work_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="출근시간 혼잡 정도"
+            android:textAppearance="@style/more_text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/afternoon_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/go_to_work_ll">
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/outline_people_24"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="정오시간 혼잡도 | "
+            android:textAppearance="@style/more_text"/>
+        <TextView
+            android:id="@+id/afternoon_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="출근시간 혼잡 정도"
+            android:textAppearance="@style/more_text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/leave_work_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/afternoon_ll">
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/outline_people_24"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="퇴근시간 혼잡도 | "
+            android:textAppearance="@style/more_text"/>
+        <TextView
+            android:id="@+id/leave_work_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="출근시간 혼잡 정도"
+            android:textAppearance="@style/more_text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/midnight_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/leave_work_ll">
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/outline_people_24"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="심야시간 혼잡도 | "
+            android:textAppearance="@style/more_text"/>
+        <TextView
+            android:id="@+id/midnight_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="출근시간 혼잡 정도"
+            android:textAppearance="@style/more_text"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/midnight_ll"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

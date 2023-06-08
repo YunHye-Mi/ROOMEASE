@@ -1,5 +1,6 @@
 package com.example.capstonedesign2.ui.bookmark
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -61,7 +62,19 @@ class AddEstateFragment() : Fragment(), BrokerView, RefreshView {
         brokerView.getBrokerEstates(user.accessToken)
     }
 
+    override fun onAddRoomSuccess(message: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAddRoomFailure(code: Int, message: String) {
+        TODO("Not yet implemented")
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun onGetRoomSuccess(brokerList: ArrayList<EstateInfo>?) {
+        if (roomList.isNotEmpty()) {
+            roomList.clear()
+        }
         if (brokerList != null) {
             for (i in brokerList) {
                 roomList.add(i)
@@ -74,34 +87,37 @@ class AddEstateFragment() : Fragment(), BrokerView, RefreshView {
         when (code) {
             401 -> {
                 Log.d("Register/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Register/Failure", "$code/$message")
         }
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, "Broker")
-        val gson = Gson()
-        val userJson = gson.toJson(updateUser)
-        val userSpf = this.requireContext().getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
-        val editor = userSpf.edit()
-        editor.apply {
-            putString("User", userJson)
+        if (!isAdded) {
+            val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, "Broker")
+            val gson = Gson()
+            val userJson = gson.toJson(updateUser)
+            val userSpf = this.requireContext().getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
+            val editor = userSpf.edit()
+            editor.apply {
+                putString("User", userJson)
+            }
+
+            editor.apply()
+
+            brokerView.getBrokerEstates(accessToken)
+
+            Log.d("ReGetBrokerEstate", "${updateUser.accessToken}/${updateUser.refreshToken}")
+
         }
-
-        editor.commit()
-
-        brokerView.getBrokerEstates(accessToken)
-
-        Log.d("ReGetBrokerEstate", "${updateUser.accessToken}/${updateUser.refreshToken}")
     }
 
     override fun onRefreshFailure(code: Int, message: String) {
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }

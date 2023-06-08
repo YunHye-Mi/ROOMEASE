@@ -15,5 +15,5 @@ interface SearchRetrofitInterface {
 
     @Headers("Content-Type: application/json")
     @GET("/api/list")
-    fun getResultList(@Query("addr") address: String, @Query("count") count: Int?, @Query("sort") sort: Int?): Call<List<ResultResponse>>
+    fun getResultList(@Query("addr") address: String, @Query("count") count: Int?, @Query("sort") sort: Int?): Call<ArrayList<ResultResponse>>
 }

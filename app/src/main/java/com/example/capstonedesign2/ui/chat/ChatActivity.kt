@@ -1,57 +1,52 @@
 package com.example.capstonedesign2.ui.chat
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.beust.klaxon.Klaxon
 import com.example.capstonedesign2.data.entities.User
 import com.example.capstonedesign2.data.remote.*
 import com.example.capstonedesign2.databinding.ActivityChatBinding
 import com.example.capstonedesign2.ui.login.RefreshView
-import com.gmail.bishoybasily.stomp.lib.Event
-import com.gmail.bishoybasily.stomp.lib.StompClient
 import com.google.gson.Gson
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import okhttp3.*
-import org.json.JSONException
-import org.json.JSONObject
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.concurrent.TimeUnit
+import ua.naiksoftware.stomp.Stomp
+import ua.naiksoftware.stomp.dto.StompCommand
+import ua.naiksoftware.stomp.dto.StompHeader
+import ua.naiksoftware.stomp.dto.StompMessage
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
     lateinit var binding : ActivityChatBinding
     lateinit var messageListAdapter: MessageListAdapter
     private var roomId = 0
-    private var messageList = ArrayList<SubscribeChatResponse>()
+    private var messageList = ArrayList<ChatMessage>()
     private var gson = Gson()
     private val chatView = ChatService()
     private val authService = AuthService()
     lateinit var user: User
-    lateinit var stompConnection: Disposable
-    lateinit var topic: Disposable
-    private var constant: Constant = Constant
-    var jsonObject = JSONObject()
+    lateinit var sender: Disposable
     private val reminderService = ReminderService()
-    @RequiresApi(Build.VERSION_CODES.O)
-    private var localDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        authService.setRefreshView(this)
         chatView.setChatView(this)
         reminderService.setReminderView(this)
 
-        var spf = getSharedPreferences("reminder", MODE_PRIVATE)
+        sender = Disposables.disposed()
+        val spf = getSharedPreferences("reminder", MODE_PRIVATE)
         if (spf != null) {
             binding.noticeLl.visibility = View.VISIBLE
         } else {
@@ -62,120 +57,82 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
         val userJson = userSpf.getString("User", "")
         user = gson.fromJson(userJson, User::class.java)
 
-        messageListAdapter = MessageListAdapter(messageList)
+        messageListAdapter = MessageListAdapter(messageList, user.accessToken)
         binding.messageRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.messageRv.adapter = messageListAdapter
 
-        topic = Disposables.empty()
-
         roomId = intent.getIntExtra("chatRoomId", 0)
+        binding.roomNameTv.text = intent.getStringExtra("brokerName")
         Log.d("ChatRoomId", roomId.toString())
         chatView.getBeforeChat(user.accessToken, roomId)
         reminderService.getReminder(user.accessToken, roomId.toLong())
 
-        val url = constant.URL
-        val intervalMillis = 5000L
-        val client = OkHttpClient.Builder()
-            .addNetworkInterceptor {
-                val request = it.request().newBuilder()
-                    .headers(Headers.headersOf("Authorization: Bearer ${user.accessToken}"))
-                    .build()
-                it.proceed(request)
+        val url = "ws://3.39.130.73:8080/ws-stomp/websocket"
+
+        val stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, url)
+        val stompHeaders = StompHeader("Authorization", "Bearer ${user.accessToken}")
+        val headers = mutableListOf<StompHeader>(stompHeaders)
+        stompClient.connect(headers)
+
+        val subscription = stompClient.topic("/sub/channel/$roomId", headers)
+            .subscribe {
+                runOnUiThread {
+                    val message = gson.fromJson(it.payload, ChatMessage::class.java)
+                    Log.i("message receive", it.payload.toString())
+                    messageList.add(message)
+                    messageListAdapter.notifyDataSetChanged()
+                }
             }
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .build()
 
-        val stomp = StompClient(client, intervalMillis).apply {
-            this.url = url
-        }
+        binding.msgEt.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
-
-
-        stompConnection = stomp.connect().subscribe{
-            when (it.type) {
-                Event.Type.OPENED -> {
-                    Log.d("OPENED", "Stomp opened")
-                    topic = stomp.join("/sub/channel/$roomId").subscribe {
-                            stompMessage ->
-                        val result = Klaxon().parse<SubscribeChatResponse>(stompMessage)
-                        this.runOnUiThread {  }
-                        if (result != null) {
-                            messageList.add(result)
-                            messageListAdapter.notifyDataSetChanged()
-                        }
-                    }
-                    try {
-                        jsonObject.put("chatRoomId", roomId)
-                        jsonObject.put("content", "안녕하세요")
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                    }
-                    stomp.send("/pub/chat/msg", jsonObject.toString()).subscribe()
-
-                    binding.msgEt.addTextChangedListener(object : TextWatcher {
-                        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-                        }
-
-                        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                            if (p0.isNullOrEmpty()) {
-                                binding.sendIv.visibility = View.GONE
-                            } else {
-                                binding.sendIv.visibility = View.VISIBLE
-                                var chatRequestJson = gson.toJson(ChatRequest(p0.toString(), roomId))
-                                binding.sendIv.setOnClickListener {
-                                    stomp.send("/put/chat/msg", chatRequestJson.toString()).subscribe()
-                                    binding.msgEt.text.clear()
-                                }
-                            }
-                        }
-
-                        override fun afterTextChanged(p0: Editable?) {
-
-                        }
-                    })
-
-                }
-                Event.Type.CLOSED -> {
-                    Log.d("CLOSED", "Stomp closed")
-                    topic.dispose()
-                }
-                Event.Type.ERROR -> {
-                    Log.d("ERROR", "Stomp error")
-                    Log.i("CONNECT ERROR", "연결 오류")
-                }
-                null -> TODO()
             }
-        }
-        onClickListener()
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (p0.isNullOrEmpty()) {
+                    binding.sendIv.visibility = View.GONE
+                } else {
+                    binding.sendIv.visibility = View.VISIBLE
+                    binding.sendIv.setOnClickListener {
+                        val data = ChatRequest(user.accessToken, p0.toString(), roomId)
+                        val message = gson.toJson(data)
+                        binding.msgEt.text.clear()
+
+                        //send
+                        val sendHeader = StompHeader(StompHeader.DESTINATION, "/pub/chat/msg")
+                        val sendHeaderList = mutableListOf(sendHeader, stompHeaders)
+                        stompClient.send(StompMessage(StompCommand.MESSAGE, sendHeaderList, message)).subscribe()
+                    }
+                }
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+
+            }
+        })
+                onClickListener()
     }
 
-    override fun onResume() {
-        super.onResume()
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onStart() {
+        super.onStart()
 
-        reminderService.getReminder(user.accessToken, roomId = roomId.toLong())
+        reminderService.getReminder(user.accessToken, roomId.toLong())
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        topic.dispose()
-        stompConnection.dispose()
-    }
     private fun onClickListener() {
         binding.backIv.setOnClickListener {
             finish()
         }
 
         binding.noticeLl.setOnClickListener {
-            var intent = Intent(this, SeeReminderActivity::class.java)
+            val intent = Intent(this, SeeReminderActivity::class.java)
             startActivity(intent)
         }
 
         binding.addReminderIv.setOnClickListener {
-            var intent = Intent(this, ReminderActivity::class.java)
+            val intent = Intent(this, ReminderActivity::class.java)
             intent.putExtra("chatRoomId", roomId)
             startActivity(intent)
         }
@@ -189,7 +146,7 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
         TODO("Not yet implemented")
     }
 
-    override fun onChatSuccess(roomResult: ArrayList<ChatRoomList>?) {
+    override fun onChatSuccess(roomResult: ArrayList<ChatRoomResult>?) {
         TODO("Not yet implemented")
     }
 
@@ -197,26 +154,30 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
         TODO("Not yet implemented")
     }
 
-    override fun onBeforeChatSuccess(chatList: ArrayList<SubscribeChatResponse>) {
-        for (i in chatList) {
-            messageList.add(i)
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onBeforeChatSuccess(chatList: ArrayList<ChatMessage>?) {
+        if (chatList != null) {
+            for (i in chatList) {
+                messageList.add(i)
+                Log.d("BeforeMessage", "${chatList.size}")
+            }
+            messageListAdapter.notifyDataSetChanged()
         }
-        messageListAdapter.notifyDataSetChanged()
         Log.d("BeforeMessage", "이전 메시지 가져오기 성공")
     }
 
     override fun onBeforeChatFailure(code: Int, message: String) {
         when (code) {
             401 -> {
-                Log.d("Register/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                Log.d("BeforeChat/Failure", "$code/$message")
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
-            403 -> Log.d("Register/Failure", "$code/$message")
+            403 -> Log.d("BeforeChat/Failure", "$code/$message")
         }
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        val updateUser = User(accessToken, refreshToken, user.nickname, null, "General")
+        val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, user.role)
         val gson = Gson()
         val userJson = gson.toJson(updateUser)
         val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
@@ -225,7 +186,7 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
             putString("User", userJson)
         }
 
-        editor.commit()
+        editor.apply()
 
         chatView.getBeforeChat(accessToken, roomId)
         reminderService.getReminder(accessToken, roomId.toLong())
@@ -237,7 +198,7 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }
@@ -271,7 +232,6 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
             401 -> {
                 Log.d("GetReminder/Failure", "$code/$message")
                 authService.refresh(
-                    user.accessToken,
                     RefreshRequest(user.refreshToken)
                 )
             }

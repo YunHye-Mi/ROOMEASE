@@ -1,18 +1,18 @@
 package com.example.capstonedesign2.data.remote
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDateTime
 
 data class ChatRoomResultResponse(
     @SerializedName("status") val  status: Int,
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
-    @SerializedName("data") val chatRoomResult: ArrayList<ChatRoomList>?
+    @SerializedName("data") val chatRoomResult: ArrayList<ChatRoomResult>?
 )
 
 data class ChatRequest(
-    @SerializedName("content") var content: String,
-    @SerializedName("chatRoomId") var chatRoomId: Int
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("content") val content: String,
+    @SerializedName("chatRoomId") val chatRoomId: Int
 )
 
 data class BrokerIdRequest(
@@ -26,33 +26,27 @@ data class CreateRoomResponse(
     @SerializedName("data") val chatRoomResult: ChatRoomResult
 )
 
-data class ChatRoomList(
-    @SerializedName("id") val id: Int,
-    @SerializedName("opponent") val broker: String,
-    @SerializedName("lastMessage") val lastMessage: String?,
-    @SerializedName("lastMessageTimestamp") val lastMessageTimestamp: LocalDateTime
-)
-
 data class ChatRoomResult(
     @SerializedName("id") val id: Int,
     @SerializedName("opponent") val broker: String,
     @SerializedName("lastMessage") val lastMessage: String?,
-    @SerializedName("lastMessageTimestamp") val lastMessageTimestamp: String
+    @SerializedName("lastMessageTimestamp") val lastMessageTimestamp: String?
 )
 
 data class BeforeChatResponse(
     @SerializedName("status") val  status: Int,
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
-    @SerializedName("data") val chatRoomResult: List<SubscribeChatResponse>
+    @SerializedName("data") val chatMessage: ArrayList<ChatMessage>
 )
 
-data class SubscribeChatResponse(
+data class ChatMessage(
     @SerializedName("id") val id: Int,
     @SerializedName("sender") var sender: String,
     @SerializedName("userId") var userId: Int,
-    @SerializedName("myMessage") var myMessage: Boolean,
+    @SerializedName("accessToken") var accessToken: String,
     @SerializedName("content") var message: String,
-    @SerializedName("timestamp") var timeStamp: LocalDateTime,
+    @SerializedName("timestamp") var timeStamp: String,
     @SerializedName("chatRoomId") var chatRoomId: Int
 )
+

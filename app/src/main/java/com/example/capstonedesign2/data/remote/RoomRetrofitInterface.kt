@@ -4,10 +4,6 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface RoomRetrofitInterface {
-
-    @POST("/api/broker/room")
-    fun addRoom(@Header(value = "Authorization") authorization: String, @Query("room_id") roomId: Int): Call<RoomResponse>
-
     @Headers("Content-Type: application/json")
     @GET("/api/room")
     fun getZoomOUt(

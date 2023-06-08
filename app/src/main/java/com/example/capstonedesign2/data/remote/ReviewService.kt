@@ -28,14 +28,17 @@ class ReviewService() {
                     if (resp != null) {
                         if (resp.success) {
                             reviewView.onAddReviewSuccess(resp.message)
-                        } else {
-                            when (resp.status) {
-                                401 -> reviewView.onAddReviewFailure(resp.status, resp.message)
-                                403 -> reviewView.onAddReviewFailure(resp.status, resp.message)
-                            }
                         }
                     }
                     Log.d("ADDREVIEW/SUCCESS", "addReview api 연결 성공")
+                } else {
+                    val resp: ReviewResponse? = response.body()
+                    if (resp != null) {
+                        when (resp.status) {
+                            401 -> reviewView.onAddReviewFailure(resp.status, resp.message)
+                            403 -> reviewView.onAddReviewFailure(resp.status, resp.message)
+                        }
+                    }
                 }
             }
             override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
@@ -53,14 +56,17 @@ class ReviewService() {
                     if (resp != null) {
                         if (resp.success) {
                             reviewView.onReviewSuccess(resp.data!!)
-                        } else {
-                            when (resp.status) {
-                                401 -> reviewView.onReviewFailure(resp.status, resp.message)
-                                403 -> reviewView.onReviewFailure(resp.status, resp.message)
-                            }
                         }
                     }
                     Log.d("GETREVIEW/SUCCESS", response.message().toString())
+                } else {
+                    var resp: ReviewResponse? = response.body()
+                    if (resp != null) {
+                        when (resp.status) {
+                            401 -> reviewView.onReviewFailure(resp.status, resp.message)
+                            403 -> reviewView.onReviewFailure(resp.status, resp.message)
+                        }
+                    }
                 }
             }
 
@@ -80,14 +86,18 @@ class ReviewService() {
                     if (resp != null) {
                         if (resp.success) {
                             reviewView.onDeleteReviewSuccess(resp.message)
-                        } else {
-                            when (resp.status) {
-                                401 -> reviewView.onDeleteReviewFailure(resp.status, resp.message)
-                                403 -> reviewView.onDeleteReviewFailure(resp.status, resp.message)
-                            }
                         }
                     }
                     Log.d("LinkReviewApi/Success", "리뷰 삭제 Api 연결")
+                }
+                else {
+                    val resp: ReviewResponse? = response.body()
+                    if (resp != null) {
+                        when (resp.status) {
+                            401 -> reviewView.onDeleteReviewFailure(resp.status, resp.message)
+                            403 -> reviewView.onDeleteReviewFailure(resp.status, resp.message)
+                        }
+                    }
                 }
             }
 
@@ -106,13 +116,10 @@ class ReviewService() {
                     if (resp != null) {
                         if (resp.success) {
                             brokerReviewView.onAddBrokerReviewSuccess(resp.message)
-                        } else {
-                            when (resp.status) {
-                                401 -> brokerReviewView.onAddBrokerReviewFailure(resp.status, resp.message)
-                                403 -> brokerReviewView.onAddBrokerReviewFailure(resp.status, resp.message)
-                            }
                         }
                     }
+                } else {
+                    brokerReviewView.onAddBrokerReviewFailure(response.code(), response.message())
                 }
             }
             override fun onFailure(call: Call<BrokerReviewResponse>, t: Throwable) {
@@ -130,13 +137,10 @@ class ReviewService() {
                     if (resp != null) {
                         if (resp.success) {
                             brokerReviewView.onBrokerReviewSuccess(resp.data)
-                        } else {
-                            when (resp.status) {
-                                401 -> brokerReviewView.onBrokerReviewFailure(resp.status, resp.message)
-                                403 -> brokerReviewView.onBrokerReviewFailure(resp.status, resp.message)
-                            }
                         }
                     }
+                } else {
+                    brokerReviewView.onBrokerReviewFailure(response.code(), response.message())
                 }
             }
 

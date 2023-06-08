@@ -12,10 +12,10 @@
         android:layout_height="30dp"
         android:gravity="center_vertical|start"
         android:paddingHorizontal="20dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:text="안녕하세요."
         android:textSize="14sp"
-        android:background="@drawable/msg_brown_round_shape"
+        android:background="@drawable/msg_gray_round_shape"
         android:textAppearance="@style/review_text"/>
 
     <TextView

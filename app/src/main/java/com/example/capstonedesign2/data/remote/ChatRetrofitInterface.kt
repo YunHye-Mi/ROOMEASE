@@ -11,6 +11,6 @@ interface ChatRetrofitInterface {
     @GET("/api/chatroom/list")
     fun getChatRoom(@Header(value = "Authorization") authorization: String): Call<ChatRoomResultResponse>
 
-    @GET("/api/chatroom/chat-list")
-    fun getBeforeChat(@Header(value = "Authorization") authorization: String, @Query("chatRoomId") chatRoomId: Int): Call<BeforeChatResponse>
+    @GET("/api/chatroom/chat-list/{chatRoomId}")
+    fun getBeforeChat(@Header(value = "Authorization") authorization: String, @Path("chatRoomId") chatRoomId: Int): Call<BeforeChatResponse>
 }

@@ -17,6 +17,9 @@ interface BookmarkRetrofitInterface {
     @GET("/api/bookmark/list")
     fun getBookmark(@Header(value = "Authorization") authorization: String): Call<BookmarkResponse>
 
-    @GET("/api/broker/room/list")
+    @POST("/api/room/broker")
+    fun registerEstate(@Header(value = "Authorization") authorization: String, @Body registerEstate: RegisterEstate): Call<RoomResponse>
+
+    @GET("/api/room/broker")
     fun getBrokerEstates(@Header(value = "Authorization") authorization: String): Call<BookmarkResponse>
 }

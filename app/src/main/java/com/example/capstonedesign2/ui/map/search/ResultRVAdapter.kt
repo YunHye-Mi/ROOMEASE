@@ -47,7 +47,6 @@ class ResultRVAdapter(val context: Context, private val resultResponseList: Arra
                 binding.rentPriceTv.text = resultResponse.deposit.toString() + "/" +  resultResponse.rent.toString()
             }
             binding.rentAreaTv.text = resultResponse.size.toString() + "(m²)"
-//            binding.flrNoTv.text = resultResponse.floor + " 층"
         }
     }
 }

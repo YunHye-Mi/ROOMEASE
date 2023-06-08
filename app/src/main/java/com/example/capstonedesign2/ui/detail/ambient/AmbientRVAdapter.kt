@@ -19,6 +19,13 @@ class AmbientRVAdapter(private val environmentList: ArrayList<Environment>) : Re
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.binding.goToWorkLl.visibility = View.GONE
+        holder.binding.afternoonLl.visibility = View.GONE
+        holder.binding.leaveWorkLl.visibility = View.GONE
+        holder.binding.midnightLl.visibility = View.GONE
+        holder.binding.distanceLl.visibility = View.GONE
+        holder.binding.line2.visibility = View.GONE
+
         when(environmentList[position].type) {
             "세탁소" -> {
                 holder.binding.itemIv.setImageResource(R.drawable.outline_local_laundry_service_24)

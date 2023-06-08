@@ -9,12 +9,14 @@ import com.example.capstonedesign2.R
 import com.example.capstonedesign2.data.entities.User
 import com.example.capstonedesign2.data.remote.*
 import com.example.capstonedesign2.databinding.ActivityDetailBinding
+import com.example.capstonedesign2.ui.addEstate.BrokerView
 import com.example.capstonedesign2.ui.bookmark.BookmarkView
 import com.example.capstonedesign2.ui.login.RefreshView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 
-class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView, BrokerReviewView {
+class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView, BrokerReviewView,
+    BrokerView {
     lateinit var binding : ActivityDetailBinding
     private val information = arrayListOf("대중교통", "주변환경", "리뷰")
     private var gson = Gson()
@@ -25,10 +27,14 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
     private var roomId = ""
     private var brokerId = 0
     lateinit var user: User
+    private var addBookmark = false
+    private var addBrokerEstate = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         bookmarkView.setBookmarkView(this)
+        bookmarkView.setBrokerView(this)
         roomView.setRoomView(this)
         brokerReviewView.setBrokerReviewView(this)
         authService.setRefreshView(this)
@@ -83,11 +89,13 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
 
             if (user.role == "General") {
                 if (roomId != null) {
+                    addBookmark = true
                     bookmarkView.addBookmark(user.accessToken, roomId.toInt())
                 }
             } else {
                 if (roomId != null) {
-                    roomView.addRoom(user.accessToken, roomId.toInt())
+                    addBrokerEstate = true
+                    bookmarkView.addRoom(user.accessToken, RegisterEstate(roomId.toInt()))
                 }
             }
         }
@@ -113,8 +121,17 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
         Log.d("ADDBOOKMARK/FAILURE", message)
     }
 
+    override fun onGetRoomSuccess(brokerList: ArrayList<EstateInfo>?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onGetRoomFailure(code: Int, message: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun onDetailSuccess(room: ArrayList<Room>) {
         for (i in room) {
+            binding.explainTv.text = i.explain
             binding.addressTv.text = i.address
             if (i.sales_type == "월세") {
                 binding.priceTv.text = "${i.deposit}만원 /${i.rent}만원"
@@ -163,7 +180,7 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
         when (code) {
             401 -> {
                 Log.d("AddBookmark/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("AddBookmark/Failure", "$code/$message")
         }
@@ -178,7 +195,7 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        val updateUser = User(accessToken, refreshToken, user.nickname, null, "General")
+        val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, user.role)
         val gson = Gson()
         val userJson = gson.toJson(updateUser)
         val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
@@ -190,7 +207,12 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
         editor.commit()
 
         brokerReviewView.getBrokerReviews(accessToken, brokerId)
-        bookmarkView.getBookmark(accessToken)
+
+        if (user.role == "Broker" && addBrokerEstate) {
+            bookmarkView.addRoom(accessToken, RegisterEstate(roomId.toInt()))
+        } else if (user.role == "General" && addBookmark){
+            bookmarkView.addBookmark(accessToken, roomId.toInt())
+        }
 
         Log.d("ReGetBookMark", "${updateUser.accessToken}/${updateUser.role}")
     }
@@ -199,7 +221,7 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }
@@ -227,7 +249,7 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }

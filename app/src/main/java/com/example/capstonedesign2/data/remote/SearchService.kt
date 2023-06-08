@@ -41,18 +41,21 @@ class SearchService() {
 
     fun getResultList(address: String, count: Int?, sort: Int) {
         var searchService = getRetrofit2().create(SearchRetrofitInterface::class.java)
-        searchService.getResultList(address, count, sort).enqueue(object : Callback<List<ResultResponse>> {
-            override fun onResponse(call: Call<List<ResultResponse>>, response: Response<List<ResultResponse>>) {
+        searchService.getResultList(address, count, sort).enqueue(object : Callback<ArrayList<ResultResponse>> {
+            override fun onResponse(
+                call: Call<ArrayList<ResultResponse>>,
+                response: Response<ArrayList<ResultResponse>>
+            ) {
                 if (response.isSuccessful) {
-                    var resp: List<ResultResponse>? = response.body()
+                    var resp: ArrayList<ResultResponse>? = response.body()
                     if (resp != null) {
-                        resultView.onResultSuccess(resp as ArrayList<ResultResponse>)
+                        resultView.onResultSuccess(resp)
                         Log.d("RESULT/SUCCESS", response.message())
                     }
                 }
             }
 
-            override fun onFailure(call: Call<List<ResultResponse>>, t: Throwable) {
+            override fun onFailure(call: Call<ArrayList<ResultResponse>>, t: Throwable) {
                 resultView.onResultFailure(t.message.toString())
             }
 

@@ -43,21 +43,24 @@ class SeeReminderActivity : AppCompatActivity(), MapViewEventListener {
         user = gson.fromJson(userJson, User::class.java)
         accessToken = user.accessToken
 
+        binding.reminderMapview.setMapViewEventListener(this)
+
         // 클릭 이벤트 발생 시
         onClickListener()
 
     }
     override fun onMapViewInitialized(p0: MapView?) {
         if (p0 != null) {
-            var mapCenter = MapPoint.mapPointWithGeoCoord(reminder.latitude.toDouble(), reminder.longitude.toDouble())
+            var mapCenter = MapPoint.mapPointWithGeoCoord(reminder.longitude.toDouble(), reminder.latitude.toDouble())
             var marker = MapPOIItem()
             marker.apply {
                 tag = reminder.roomId
                 itemName = reminder.place
                 markerType = MapPOIItem.MarkerType.RedPin
                 isShowCalloutBalloonOnTouch = false
+                mapPoint = mapCenter
             }
-            p0.setMapCenterPointAndZoomLevel(mapCenter, 1, false)
+            p0.setMapCenterPointAndZoomLevel(mapCenter, 2, false)
             p0.addPOIItem(marker)
             p0.zoomIn(false)
             p0.zoomOut(false)

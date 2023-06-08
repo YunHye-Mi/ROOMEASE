@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.capstonedesign2.data.remote.EstateInfo
 import com.example.capstonedesign2.databinding.ItemBrokerestaeBinding
-import com.squareup.picasso.Picasso
 import kotlin.collections.ArrayList
 
 class AddEstateRVAdapter(val context: Context, private val roomList: ArrayList<EstateInfo>) : RecyclerView.Adapter<AddEstateRVAdapter.ViewHolder>() {

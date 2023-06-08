@@ -1,5 +1,6 @@
 package com.example.capstonedesign2.ui.chat
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
@@ -9,7 +10,6 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -60,8 +60,8 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
 
         spf = getSharedPreferences("reminder", MODE_PRIVATE)
 
-        var spf = getSharedPreferences("currentUser", MODE_PRIVATE)
-        var userJson = spf.getString("User", "")
+        val spf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val userJson = spf.getString("User", "")
         user = gson.fromJson(userJson, User::class.java)
         roomId = intent.getIntExtra("chatRoomId", roomId)
 
@@ -156,18 +156,18 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
             }
         }
 
-        var editor = spf.edit()
+        val editor = spf.edit()
 
         placeRVAdapter.setMyItemClickListener(object : PlaceRVAdapter.MyItemClickListener {
-            override fun onItemClick(document: Document) {
+            override fun onItemClick(documentSearch: Document) {
                 if (mapView.poiItems.isNotEmpty())
                     mapView.removeAllPOIItems()
 
-                val markerPoint = MapPoint.mapPointWithGeoCoord(document.y.toDouble(), document.x.toDouble())
+                val markerPoint = MapPoint.mapPointWithGeoCoord(documentSearch.y.toDouble(), documentSearch.x.toDouble())
                 val marker = MapPOIItem()
                 marker.apply {
-                    itemName = document.placeName
-                    tag = document.id.toInt()
+                    itemName = documentSearch.placeName
+                    tag = documentSearch.id.toInt()
                     mapPoint = markerPoint
                     markerType = MapPOIItem.MarkerType.BluePin
                     isShowCalloutBalloonOnTouch = false
@@ -177,19 +177,19 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
                 mapView.setMapCenterPointAndZoomLevel(markerPoint, 1, true)
 
                 editor.apply {
-                    putString("reminderPlace", document.placeName)
-                    putString("reminderPlaceLng", document.x)
-                    putString("reminderPlaceLat", document.y)
+                    putString("reminderPlace", documentSearch.placeName)
+                    putString("reminderPlaceLng", documentSearch.x)
+                    putString("reminderPlaceLat", documentSearch.y)
                 }
 
-                selectedPlace = document.placeName
+                selectedPlace = documentSearch.placeName
             }
         })
 
 
         builder.setPositiveButton(R.string.ok) { dialog, id ->
             textView.text = selectedPlace
-            editor.commit()
+            editor.apply()
         }
             .setNegativeButton(R.string.cancel) { dialog, id ->
 
@@ -276,7 +276,7 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
         return Reminder(roomId, date, time, place, placeLat, placeLng)
     }
 
-    override fun onCategorySuccess(document1: String, document: ArrayList<Document>) {
+    override fun onCategorySuccess(message: String, document: ArrayList<Document>) {
         TODO("Not yet implemented")
     }
 
@@ -284,14 +284,15 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
         TODO("Not yet implemented")
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onKeyWordSuccess(resultSearchKeyword: ResultSearchKeyword, message: String) {
-        if (!resultSearchKeyword.documents.isNullOrEmpty()) {
+        if (!resultSearchKeyword.documents.isEmpty()) {
             if (searchList.isNotEmpty()) {
                 searchList.clear()
             }
 
             for (document in resultSearchKeyword.documents) {
-                var documentSearch = Document(document.id, document.placeName, document.category_name, document.category_group_code,document.category_group_name, document.phone, document.addressName, document.road_address_name, document.x, document.y, document.place_url, document.distance)
+                val documentSearch = Document(document.id, document.placeName, document.category_name, document.category_group_code,document.category_group_name, document.phone, document.addressName, document.road_address_name, document.x, document.y, document.place_url, document.distance)
                 searchList.add(documentSearch)
             }
             placeRVAdapter.notifyDataSetChanged()
@@ -306,7 +307,7 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
 
     // 키보드 숨기기
     private fun hideKeyBoard(){
-        var inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
@@ -318,7 +319,7 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
         when (code) {
             401 -> {
                 Log.d("AddReminder/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("AddReminder/Failure", "$code/$message")
         }
@@ -333,7 +334,7 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        val updateUser = User(accessToken, refreshToken, user.nickname, null, "General")
+        val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, user.role)
         val gson = Gson()
         val userJson = gson.toJson(updateUser)
         val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
@@ -342,7 +343,7 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
             putString("User", userJson)
         }
 
-        editor.commit()
+        editor.apply()
 
         reminderService.addReminder(accessToken, getReminder())
 
@@ -353,7 +354,7 @@ class ReminderActivity : AppCompatActivity(), KaKaoView, ReminderView, RefreshVi
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }

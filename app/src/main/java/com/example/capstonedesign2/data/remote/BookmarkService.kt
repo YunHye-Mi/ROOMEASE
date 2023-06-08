@@ -29,14 +29,12 @@ class BookmarkService() {
                     if (resp != null) {
                         if (resp.success) {
                             bookmarkView.onBookmarkSuccess(resp.message)
-                        } else {
-                            when (resp.status) {
-                                401 -> bookmarkView.onBookmarkFailure(resp.status, resp.message)
-                                403 -> bookmarkView.onBookmarkFailure(resp.status, resp.message)
-                            }
                         }
                     }
                     Log.d("BOOKMARK/LINK", "북마크 API 연결")
+                }
+                else {
+                    bookmarkView.onBookmarkFailure(response.code(), response.message())
                 }
             }
 
@@ -56,13 +54,11 @@ class BookmarkService() {
                     if (resp != null) {
                         if (resp.success) {
                             bookmarkView.onBMListSuccess(resp.bookmark)
-                        } else {
-                            when (resp.status) {
-                                401 -> bookmarkView.onBMListFailure(resp.status, resp.message)
-                                403 -> bookmarkView.onBMListFailure(resp.status, resp.message)
-                            }
                         }
                     }
+                }
+                else {
+                    bookmarkView.onBMListFailure(response.code(), response.message())
                 }
             }
 
@@ -71,6 +67,29 @@ class BookmarkService() {
             }
         })
     }
+
+    fun addRoom(authorization: String, registerEstate: RegisterEstate) {
+        var roomService = getRetrofit().create(BookmarkRetrofitInterface::class.java)
+        roomService.registerEstate("Bearer $authorization", registerEstate).enqueue(object : Callback<RoomResponse> {
+            override fun onResponse(call: Call<RoomResponse>, response: Response<RoomResponse>) {
+                if (response.isSuccessful) {
+                    var resp: RoomResponse? = response.body()
+                    if (resp != null) {
+                        if (resp.success) {
+                            brokerView.onAddRoomSuccess(resp.message)
+                        }
+                    }
+                } else {
+                    brokerView.onAddRoomFailure(response.code(), response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<RoomResponse>, t: Throwable) {
+                Log.d("ADDROOM/FAILURE", t.message.toString())
+            }
+        })
+    }
+
 
     fun getBrokerEstates(authorization: String) {
         val bookmarkService = getRetrofit().create(BookmarkRetrofitInterface::class.java)
@@ -81,20 +100,16 @@ class BookmarkService() {
                     if (resp != null) {
                         if (resp.success) {
                             brokerView.onGetRoomSuccess(resp.bookmark)
-                        } else {
-                            when (resp.status) {
-                                401 -> brokerView.onGetRoomFailure(resp.status, resp.message)
-                                403 -> brokerView.onGetRoomFailure(resp.status, resp.message)
-                            }
                         }
                     }
+                }else {
+                    brokerView.onGetRoomFailure(response.code(), response.message())
                 }
             }
 
             override fun onFailure(call: Call<BookmarkResponse>, t: Throwable) {
                 Log.d("Broker/Failure", t.message.toString())
             }
-
         })
     }
 }

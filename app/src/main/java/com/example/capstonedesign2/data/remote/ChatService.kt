@@ -26,11 +26,11 @@ class ChatService() {
                     if (resp != null) {
                         if (resp.success) {
                             chatView.onCreateChatSuccess(resp.chatRoomResult)
-                        } else {
-                            chatView.onCreateChatFailure(resp.status, resp.message)
                         }
                     }
                     Log.d("LinkChatApi", "채팅 api 연결 성공")
+                } else {
+                    chatView.onCreateChatFailure(response.code(), response.message())
                 }
             }
 
@@ -49,45 +49,41 @@ class ChatService() {
                     if (resp != null) {
                         if (resp.success) {
                             chatView.onChatSuccess(resp.chatRoomResult)
-                        } else {
-                            when (resp.status) {
-                                401 -> chatView.onChatFailure(resp.status, resp.message)
-                                else -> chatView.onChatFailure(resp.status, resp.message)
-                            }
                         }
                     }
                     Log.d("LinkChatApi", "채팅 api 연결 성공")
+                } else {
+                    chatView.onChatFailure(response.code(), response.message())
+
                 }
             }
 
             override fun onFailure(call: Call<ChatRoomResultResponse>, t: Throwable) {
-                Log.d("ChatRoom/Failure", t.message.toString())
+                Log.d("LinkChatApi/Failure", t.message.toString())
             }
         })
     }
 
     fun getBeforeChat(authorization: String, chatRoomId: Int) {
-        var chatService = getRetrofit().create(ChatRetrofitInterface::class.java)
-        chatService.getBeforeChat(authorization, chatRoomId).enqueue(object : Callback<BeforeChatResponse> {
+        val chatService = getRetrofit().create(ChatRetrofitInterface::class.java)
+        chatService.getBeforeChat("Bearer $authorization", chatRoomId).enqueue(object : Callback<BeforeChatResponse> {
             override fun onResponse(call: Call<BeforeChatResponse>, response: Response<BeforeChatResponse>) {
                 if (response.isSuccessful) {
                     var resp: BeforeChatResponse? = response.body()
                     if (resp != null) {
                         if (resp.success) {
-                            chatView.onBeforeChatSuccess(resp.chatRoomResult as ArrayList<SubscribeChatResponse>)
-                        } else {
-                            when (resp.status) {
-                                401 -> chatView.onChatFailure(resp.status, resp.message)
-                                else -> chatView.onChatFailure(resp.status, resp.message)
-                            }
+                            chatView.onBeforeChatSuccess(resp.chatMessage)
                         }
                     }
-                    Log.d("LinkChatApi", "채팅 api 연결 성공")
+                    Log.d("LinkBeforeChatApi", "채팅 api 연결 성공")
+                }
+                else {
+                    chatView.onBeforeChatFailure(response.code(), response.message())
                 }
             }
 
             override fun onFailure(call: Call<BeforeChatResponse>, t: Throwable) {
-                Log.d("BeforeChat/Failure", t.message.toString())
+                Log.d("LinkBeforeChat/Failure", t.cause!!.message.toString())
             }
         })
     }

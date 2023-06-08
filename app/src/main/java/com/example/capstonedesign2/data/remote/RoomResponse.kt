@@ -18,6 +18,9 @@ data class EstateInfo(
     @SerializedName("sizeM2") val size: Double
 )
 
+data class RegisterEstate(
+    @SerializedName("roomId") val roomId: Int
+)
 data class MapZoomOut(
     @SerializedName("ids") val ids: ArrayList<String>,
     @SerializedName("lat") val lat: Double,
@@ -57,8 +60,12 @@ data class Room(
 
 data class NearSubway(
     @SerializedName("id") val id: Int,
+    @SerializedName("lineNum") val lineNum: Int,
     @SerializedName("name") val name: String,
-    @SerializedName("description") val description: String
+    @SerializedName("description") val description: String,
+    @SerializedName("distance") val distance: Int,
+    @SerializedName("time") val time: Int,
+    @SerializedName("crowding") val crowding: ArrayList<Float>
 )
 
 data class Environment(

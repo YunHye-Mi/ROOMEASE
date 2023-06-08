@@ -27,14 +27,11 @@ class ReminderService() {
                     if (resp != null) {
                         if (resp.success) {
                             reminderView.onReminderSuccess(resp.message)
-                        } else {
-                            when (resp.status) {
-                                401 -> reminderView.onReminderFailure(resp.status, resp.message)
-                                else -> reminderView.onReminderFailure(resp.status, resp.message)
-                            }
                         }
                     }
                     Log.d("LinkReminderApi", "리마인더 api 연결 성공")
+                } else {
+                    reminderView.onReminderFailure(response.code(), response.message())
                 }
             }
 
@@ -57,14 +54,11 @@ class ReminderService() {
                     if (resp != null) {
                         if (resp.success) {
                             reminderView.onSeeReminderSuccess(resp.data)
-                        } else {
-                            when (resp.status) {
-                                401 -> reminderView.onSeeReminderFailure(resp.status, resp.message)
-                                else -> reminderView.onSeeReminderFailure(resp.status, resp.message)
-                            }
                         }
                     }
                     Log.d("LinkGetReminderApi", "리마인더 api 연결 성공")
+                } else {
+                    reminderView.onSeeReminderFailure(response.code(), response.message())
                 }
             }
 

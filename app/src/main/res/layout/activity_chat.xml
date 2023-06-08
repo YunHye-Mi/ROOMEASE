@@ -29,6 +29,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/white" />
         <TextView
+            android:id="@+id/room_name_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="40dp"
@@ -45,7 +46,7 @@
         android:layout_height="0dp"
         android:layout_marginHorizontal="15dp"
         tools:listitem="@layout/item_message_me"
-        app:layout_constraintTop_toBottomOf="@id/view"
+        app:layout_constraintTop_toBottomOf="@id/notice_ll"
         app:layout_constraintBottom_toTopOf="@id/view2"/>
 
     <LinearLayout
@@ -53,6 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
+        android:visibility="gone"
         android:background="@drawable/reminder_alarm_background"
         android:gravity="center_vertical"
         android:layout_margin="10dp"

@@ -93,7 +93,7 @@ class BrokerActivity : AppCompatActivity(), RegisterView, RefreshView {
                     binding.startTv.setBackgroundColor(Color.parseColor("#FDC536"))
 
                     binding.startTv.setOnClickListener {
-                        var intent = Intent(this, MainActivity::class.java)
+                        val intent = Intent(this, MainActivity::class.java)
                         intent.putExtra("user", "Broker")
                         startActivity(intent)
                     }
@@ -109,7 +109,26 @@ class BrokerActivity : AppCompatActivity(), RegisterView, RefreshView {
                     binding.startTv.setOnClickListener {
                         finish()
 
-                        authService.register(access, RegisterRequest(binding.nickEt.text.toString(), binding.intermediaryEt.text.toString()))
+                        Toast.makeText(this, "등록 완료", Toast.LENGTH_LONG).show()
+                        finish()
+                        val name = binding.nickEt.text.toString()
+                        val role  = "Broker"
+                        val user = User("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiaWF0IjoxNjg1Njg5MTg0LCJpc3MiOiJNb3JnYW4iLCJleHAiOjE2ODU3NzU1ODQsInN1YiI6InVzZXJJbmZvIn0.ZqiwGq1ALKWoI_zPa3O1trWWLza5Lob4jjxYsivaumg",
+                            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiaWF0IjoxNjg1Njg5MTg0LCJpc3MiOiJNb3JnYW4iLCJleHAiOjE2ODgyODExODQsInN1YiI6InVzZXJJbmZvIn0.qQHuaeXC1mhmj_KEa_OLgT61s6V2CzOvIal5-joLo8I", name, binding.intermediaryEt.text.toString(), role)
+                        val gson = Gson()
+                        val userJson = gson.toJson(user)
+                        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+                        val editor = userSpf.edit()
+                        editor.apply {
+                            putString("User", userJson)
+                        }
+
+                        editor.apply()
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+
+                        //정식으로 시장에 앱을 출시하지 않아 kakao에서 sso_idf를 발급해주지 않아 사용자 구분이 안 되므로 브로커는 임의로 만든 정보를 명시적으로 하여 접속 중
+//                        authService.register(access, RegisterRequest(binding.nickEt.text.toString(), binding.intermediaryEt.text.toString()))
                     }
                 }
                 else {
@@ -139,12 +158,12 @@ class BrokerActivity : AppCompatActivity(), RegisterView, RefreshView {
 
     // 키보드 숨기기
     private fun hideKeyBoard(){
-        var inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
     override fun onRegisterSuccess(message: String, data: Boolean) {
-        Toast.makeText(this, "등록 완료", Toast.LENGTH_LONG)
+        Toast.makeText(this, "등록 완료", Toast.LENGTH_LONG).show()
         finish()
         val name = binding.nickEt.text.toString()
         var role  = ""
@@ -171,14 +190,14 @@ class BrokerActivity : AppCompatActivity(), RegisterView, RefreshView {
         when (code) {
             401 -> {
                 Log.d("Register/Failure", "$code/$message")
-                authService.refresh(access, RefreshRequest(refresh))
+                authService.refresh(RefreshRequest("Bearer $refresh"))
             }
             403 -> Log.d("Register/Failure", "$code/$message")
         }
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        val updateUser = User(accessToken, refreshToken, binding.nickEt.text.toString(), binding.intermediaryEt.text.toString(), "General")
+        val updateUser = User(accessToken, refreshToken, binding.nickEt.text.toString(), binding.intermediaryEt.text.toString(), "Broker")
         val gson = Gson()
         val userJson = gson.toJson(updateUser)
         val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
@@ -189,7 +208,7 @@ class BrokerActivity : AppCompatActivity(), RegisterView, RefreshView {
 
         startActivity(intent)
 
-        editor.commit()
+        editor.apply()
 
         authService.register(accessToken, RegisterRequest(binding.nickEt.text.toString(), binding.intermediaryEt.text.toString()))
 
@@ -200,7 +219,7 @@ class BrokerActivity : AppCompatActivity(), RegisterView, RefreshView {
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(access, RefreshRequest(refresh))
+                authService.refresh(RefreshRequest(refresh))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }

@@ -1,5 +1,6 @@
 package com.example.capstonedesign2.ui.map.search
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstonedesign2.R
 import com.example.capstonedesign2.data.remote.ResultResponse
@@ -29,8 +31,6 @@ class ResultActivity : AppCompatActivity(), ResultView {
         dong = intent.getStringExtra("search_dong").toString()
         full = intent.getStringExtra("search_full").toString()
 
-        Log.d("DONG/FULL", "$dong/$full")
-
         binding.backIv.setOnClickListener {
             onBackPressed()
         }
@@ -46,27 +46,24 @@ class ResultActivity : AppCompatActivity(), ResultView {
             spinner.adapter = adapter
         }
 
+        searchService.setResultView(this)
+
+        if (full != null) {
+            searchService.getResultList(full, null, 1)
+        }
+
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 // 선택된 항목에 따라 원하는 작업을 수행합니다.
                 when (position) {
                     0 -> {
-                        if (full != null) {
-                            resultResponseList.clear()
-                            searchService.getResultList(full, 10000, 1)
-                        }
+                        searchService.getResultList(full, null, 1)
                     }
                     1 -> {
-                        if (full != null) {
-                            resultResponseList.clear()
-                            searchService.getResultList(full, 10000, 2)
-                        }
+                        searchService.getResultList(full, null, 2)
                     }
                     else -> {
-                        if (full != null) {
-                            resultResponseList.clear()
-                            searchService.getResultList(full, 10000, 3)
-                        }
+                        searchService.getResultList(full, null, 3)
                     }
                 }
             }
@@ -77,15 +74,8 @@ class ResultActivity : AppCompatActivity(), ResultView {
         }
 
         initRV()
-    }
 
-    override fun onStart() {
-        super.onStart()
-
-        searchService.setResultView(this)
-        if (full != null) {
-            searchService.getResultList(full, null, 1)
-        }
+        Log.d("spinner 개수", spinner.size.toString())
     }
 
     fun initRV() {
@@ -103,10 +93,12 @@ class ResultActivity : AppCompatActivity(), ResultView {
         } )
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResultSuccess(response: ArrayList<ResultResponse>) {
         if (resultResponseList.isNotEmpty()) {
             resultResponseList.clear()
         }
+        resultRVAdapter.notifyDataSetChanged()
         for (i in response) {
             resultResponseList.add(i)
         }
@@ -116,7 +108,7 @@ class ResultActivity : AppCompatActivity(), ResultView {
         if (response.size > 999) {
             binding.searchTv.text = "\"$dong\"검색 결과(999+)"
         } else {
-            binding.searchTv.text ="\"$dong\"검색 결과(${response.size})"
+            binding.searchTv.text = "\"$dong\"검색 결과(${response.size})"
         }
     }
 

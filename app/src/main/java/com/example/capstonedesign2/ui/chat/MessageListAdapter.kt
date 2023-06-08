@@ -4,11 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.capstonedesign2.data.remote.SubscribeChatResponse
+import com.example.capstonedesign2.data.remote.ChatMessage
 import com.example.capstonedesign2.databinding.ItemMessageMeBinding
 import com.example.capstonedesign2.databinding.ItemMessageOtherBinding
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-class MessageListAdapter(private val messageList: ArrayList<SubscribeChatResponse>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MessageListAdapter(private val messageList: ArrayList<ChatMessage>, private val accessToken: String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val message_sent = 1
     private val message_received = 2
     lateinit var meBinding: ItemMessageMeBinding
@@ -39,7 +41,7 @@ class MessageListAdapter(private val messageList: ArrayList<SubscribeChatRespons
 
     override fun getItemViewType(position: Int): Int {
         var chatMessage = messageList[position]
-        return if (chatMessage.myMessage) {
+        return if (chatMessage.accessToken == accessToken) {
             message_sent
         } else {
             message_received
@@ -47,26 +49,20 @@ class MessageListAdapter(private val messageList: ArrayList<SubscribeChatRespons
     }
 
     inner class ReceivedMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        lateinit var binding : ItemMessageOtherBinding
-
-        fun bind(chatMessage: SubscribeChatResponse) {
+        fun bind(chatMessage: ChatMessage) {
             super.itemView
 
-            binding.messageTv.text = chatMessage.message
-            binding.timeTv.text = chatMessage.timeStamp.toString()
+            otherBinding.messageTv.text = chatMessage.message
+            otherBinding.timeTv.text = LocalDateTime.parse(chatMessage.timeStamp).format(DateTimeFormatter.ofPattern("a h:mm"))
         }
     }
 
     inner class SentMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        lateinit var binding : ItemMessageMeBinding
-
-        fun bind(chatMessage: SubscribeChatResponse) {
+        fun bind(chatMessage: ChatMessage) {
             super.itemView
-
-            binding.messageTv.text = chatMessage.message
-            binding.timeTv.text = chatMessage.timeStamp.toString()
+            meBinding.messageTv.text = chatMessage.message
+            meBinding.timeTv.text = LocalDateTime.parse(chatMessage.timeStamp).format(DateTimeFormatter.ofPattern("a h:mm"))
         }
     }
 }

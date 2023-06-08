@@ -134,13 +134,13 @@ class GeneralActivity : AppCompatActivity(), RegisterView, RefreshView {
 
     // 키보드 숨기기
     private fun hideKeyBoard(){
-        var inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
     override fun onRegisterSuccess(message: String, data: Boolean) {
-       Toast.makeText(this, "등록 완료", Toast.LENGTH_LONG)
-        var intent = Intent(this, MainActivity::class.java)
+       Toast.makeText(this, "등록 완료", Toast.LENGTH_LONG).show()
+        val intent = Intent(this, MainActivity::class.java)
         finish()
         val name = binding.nickEt.text.toString()
         var role  = ""
@@ -160,7 +160,7 @@ class GeneralActivity : AppCompatActivity(), RegisterView, RefreshView {
 
         startActivity(intent)
 
-        editor.commit()
+        editor.apply()
 
         Log.d("REGISTER/SUCCESS", "${user.nickname}/${user.role}/${user.accessToken}")
     }
@@ -169,7 +169,7 @@ class GeneralActivity : AppCompatActivity(), RegisterView, RefreshView {
         when (code) {
             401 -> {
                 Log.d("Register/Failure", "$code/$message")
-                authService.refresh(accessToken, RefreshRequest(refreshToken))
+                authService.refresh(RefreshRequest(refreshToken))
             }
             403 -> Log.d("Register/Failure", "$code/$message")
         }
@@ -187,7 +187,7 @@ class GeneralActivity : AppCompatActivity(), RegisterView, RefreshView {
 
         startActivity(intent)
 
-        editor.commit()
+        editor.apply()
 
         authService.register(accessToken, RegisterRequest(binding.nickEt.text.toString(), null))
 
@@ -198,7 +198,7 @@ class GeneralActivity : AppCompatActivity(), RegisterView, RefreshView {
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(accessToken, RefreshRequest(refreshToken))
+                authService.refresh(RefreshRequest(refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }

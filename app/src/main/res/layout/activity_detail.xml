@@ -13,7 +13,7 @@
         android:layout_height="65dp"
         android:orientation="horizontal"
         android:background="@color/primary"
-        android:gravity="center_vertical"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -28,6 +28,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/white" />
+        <TextView
+            android:id="@+id/explain_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="15"
+            android:textSize="14sp"
+            android:layout_marginHorizontal="10dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:maxEms="40"
+            android:autoSizeMaxTextSize="14sp"
+            android:autoSizeMinTextSize="11sp"
+            android:textAppearance="@style/more_text"
+            android:text="explain"/>
 
         <ImageView
             android:id="@+id/bookmark_off_iv"
@@ -190,6 +204,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="평점"
+                    android:maxLength="4"
                     android:textSize="18sp"
                     android:textColor="@color/orange"
                     android:fontFamily="@font/suit_semibold"/>

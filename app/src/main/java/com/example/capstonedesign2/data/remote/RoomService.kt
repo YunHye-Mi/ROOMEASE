@@ -21,31 +21,6 @@ class RoomService() {
         this.mapDataView = mapDataView
     }
 
-    fun addRoom(authorization: String, roomId: Int) {
-        var roomService = getRetrofit().create(RoomRetrofitInterface::class.java)
-        roomService.addRoom("Bearer $authorization", roomId).enqueue(object : Callback<RoomResponse> {
-            override fun onResponse(call: Call<RoomResponse>, response: Response<RoomResponse>) {
-                if (response.isSuccessful) {
-                    var resp: RoomResponse? = response.body()
-                    if (resp != null) {
-                        if (resp.success) {
-                            roomView.onAddRoomSuccess(resp.message)
-                        } else {
-                            when (resp.status) {
-                                401 -> roomView.onAddRoomFailure(resp.status, resp.message)
-                                403 -> roomView.onAddRoomFailure(resp.status, resp.message)
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<RoomResponse>, t: Throwable) {
-                Log.d("ADDROOM/FAILURE", t.message.toString())
-            }
-        })
-    }
-
     fun getZoomOut(
         lbLat: Double, lbLng: Double, rtLat: Double,
         rtLng: Double, zoomin: Int, minRent: Double, maxRent: Double, type: Int, minSize: Double, maxSize: Double,
@@ -62,10 +37,10 @@ class RoomService() {
                     if (resp != null) {
                         if (response.code() == 200) {
                             mapDataView.onZoomOutSuccess(resp)
-                        } else {
-                            mapDataView.onZoomOutFailure(response.code(), response.message())
                         }
                     }
+                }else {
+                    mapDataView.onZoomOutFailure(response.code(), response.message())
                 }
             }
 
@@ -90,10 +65,10 @@ class RoomService() {
                     if (resp != null) {
                         if (response.code() == 200) {
                             mapDataView.onZoomInSuccess(resp)
-                        } else {
-                            mapDataView.onZoomInFailure(response.code(), response.message())
                         }
                     }
+                }else {
+                    mapDataView.onZoomInFailure(response.code(), response.message())
                 }
             }
 

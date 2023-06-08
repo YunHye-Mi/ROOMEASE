@@ -1,5 +1,6 @@
 package com.example.capstonedesign2.ui.chat
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -21,7 +22,7 @@ class ChatFragment() : Fragment(), ChatView, RefreshView {
     lateinit var user: User
     private var authService = AuthService()
     private var chatView = ChatService()
-    private var roomList = ArrayList<ChatRoomList>()
+    private var roomList = ArrayList<ChatRoomResult>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,28 +42,20 @@ class ChatFragment() : Fragment(), ChatView, RefreshView {
         chatRVAdapter = ChatRVAdapter(roomList)
         binding.chatRoomRv.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
         binding.chatRoomRv.adapter = chatRVAdapter
+        chatView.getChatRoom(user.accessToken)
+
 
         var intent = Intent(this.context, ChatActivity::class.java)
 
         chatRVAdapter.setMyItemClickListener(object : ChatRVAdapter.MyItemClickListener {
-            override fun onItemClick(room: ChatRoomList) {
-                var editor = userSpf.edit()
-                editor.apply {
-                    putString("currentUser", currentUser)
-                    putInt("chatRoom", room.id)
-                }
-                editor.commit()
+            override fun onItemClick(room: ChatRoomResult) {
+                intent.putExtra("chatRoomId", room.id)
+                intent.putExtra("brokerName", room.broker)
                 startActivity(intent)
             }
         })
 
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        chatView.getChatRoom(user.accessToken)
     }
 
     override fun onCreateChatSuccess(roomResult: ChatRoomResult) {
@@ -73,26 +66,27 @@ class ChatFragment() : Fragment(), ChatView, RefreshView {
         TODO("Not yet implemented")
     }
 
-    override fun onChatSuccess(roomResult: ArrayList<ChatRoomList>?) {
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onChatSuccess(roomResult: ArrayList<ChatRoomResult>?) {
         if (roomResult != null) {
             for (i in roomResult)
                 roomList.add(i)
             Log.d("GetChatRoom/Success", "채팅방 목록 가져오기 성공")
+            chatRVAdapter.notifyDataSetChanged()
         }
-        chatRVAdapter.notifyDataSetChanged()
     }
 
     override fun onChatFailure(code: Int, message: String) {
         when (code) {
             401 -> {
                 Log.d("GetChatRoom/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("GetChatRoom/Failure", "$code/$message")
         }
     }
 
-    override fun onBeforeChatSuccess(chatList: ArrayList<SubscribeChatResponse>) {
+    override fun onBeforeChatSuccess(chatList: ArrayList<ChatMessage>?) {
         TODO("Not yet implemented")
     }
 
@@ -101,27 +95,30 @@ class ChatFragment() : Fragment(), ChatView, RefreshView {
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        val updateUser = User(accessToken, refreshToken, user.nickname, null, "General")
-        val gson = Gson()
-        val userJson = gson.toJson(updateUser)
-        val userSpf = this.requireContext().getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
-        val editor = userSpf.edit()
-        editor.apply {
-            putString("User", userJson)
+        if (isAdded) {
+            val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, user.role)
+            val gson = Gson()
+            val userJson = gson.toJson(updateUser)
+            val userSpf = this.requireContext().getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
+            val editor = userSpf.edit()
+            editor.apply {
+                putString("User", userJson)
+            }
+
+            editor.apply()
+
+            chatView.getChatRoom(accessToken)
+
+            Log.d("ReGetRoom", "${updateUser.accessToken}/${updateUser.refreshToken}")
+
         }
-
-        editor.commit()
-
-        chatView.getChatRoom(accessToken)
-
-        Log.d("ReGetRoom", "${updateUser.accessToken}/${updateUser.refreshToken}")
     }
 
     override fun onRefreshFailure(code: Int, message: String) {
         when (code) {
             401 -> {
                 Log.d("Refresh/Failure", "$code/$message")
-                authService.refresh(user.accessToken, RefreshRequest(user.refreshToken))
+                authService.refresh(RefreshRequest(user.refreshToken))
             }
             403 -> Log.d("Refresh/Failure", "$code/$message")
         }

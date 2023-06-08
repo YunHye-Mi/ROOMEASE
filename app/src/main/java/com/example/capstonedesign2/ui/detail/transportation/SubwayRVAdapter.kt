@@ -16,14 +16,20 @@ class SubwayRVAdapter(private val nearSubways: ArrayList<NearSubway>) : Recycler
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.img.setImageResource(R.drawable.outline_subway_24)
-        holder.trans.text = nearSubways[position].name + nearSubways[position].description
+        holder.bind(nearSubways[position])
     }
 
     override fun getItemCount(): Int = nearSubways.size
 
     inner class ViewHolder(val binding: ItemDetailBinding) : RecyclerView.ViewHolder(binding.root) {
-        val img = binding.itemIv
-        val trans = binding.itemTv
+        fun bind(nearSubway: NearSubway) {
+            binding.itemIv.setImageResource(R.drawable.outline_subway_24)
+            binding.itemTv.text = nearSubway.name + nearSubway.description
+            binding.distanceTv.text = "${nearSubway.distance}M/${nearSubway.time}분 소요"
+            binding.goToWorkTv.text = nearSubway.crowding[0].toString()
+            binding.afternoonTv.text = nearSubway.crowding[1].toString()
+            binding.leaveWorkTv.text = nearSubway.crowding[2].toString()
+            binding.midnightTv.text = nearSubway.crowding[3].toString()
+        }
     }
 }
