@@ -123,6 +123,7 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
 
     override fun onAddRoomSuccess(message: String) {
         Log.d("ADDBOOKMARK/SUCCESS", message)
+        roomView.getRoomDetail(roomId)
     }
 
     override fun onAddRoomFailure(code: Int, message: String) {
@@ -149,7 +150,7 @@ class DetailActivity : AppCompatActivity(), RoomView, BookmarkView, RefreshView,
             binding.manageTv.text = "${i.manage_cost}만원"
             Glide.with(this).load("${i.coverImg}?w=400&h=300").into(binding.detailIv)
 
-            binding.detailAreaTv.text = "${i.size}(m²)"
+            binding.detailAreaTv.text = "${i.floor}층\n${i.size}(m²)"
 
             val detailAdapter = DetailVPAdapter(this, i)
             binding.detailVp.adapter = detailAdapter
