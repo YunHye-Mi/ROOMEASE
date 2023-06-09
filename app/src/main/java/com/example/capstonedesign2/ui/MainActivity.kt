@@ -21,13 +21,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var spf = getSharedPreferences("filter", MODE_PRIVATE)
-        var editor = spf.edit()
+        val spf = getSharedPreferences("filter", MODE_PRIVATE)
+        val editor = spf.edit()
         editor.clear()
-        editor.commit()
+        editor.apply()
 
-        var userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
-        var userJson = userSpf.getString("User", "")
+        val userSpf = getSharedPreferences("currentUser", MODE_PRIVATE)
+        val userJson = userSpf.getString("User", "")
 
         if (userJson != null) {
             if (!userJson.isEmpty()) {

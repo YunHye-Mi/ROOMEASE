@@ -95,23 +95,26 @@ class AddEstateFragment() : Fragment(), BrokerView, RefreshView {
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        if (!isAdded) {
-            val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, "Broker")
-            val gson = Gson()
-            val userJson = gson.toJson(updateUser)
-            val userSpf = this.requireContext().getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
-            val editor = userSpf.edit()
-            editor.apply {
-                putString("User", userJson)
+        val updateUser =
+            User(accessToken, refreshToken, user.nickname, user.registerNumber, "Broker")
+        this.onAttach(this.requireContext())
+            .let {
+                val gson = Gson()
+                val userJson = gson.toJson(updateUser)
+                val userSpf = this.requireContext()
+                    .getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
+                val editor = userSpf.edit()
+                editor.apply {
+                    putString("User", userJson)
+                }
+
+                editor.apply()
+
+                brokerView.getBrokerEstates(accessToken)
+
+                Log.d("ReGetBrokerEstate", "${updateUser.accessToken}/${updateUser.refreshToken}")
+
             }
-
-            editor.apply()
-
-            brokerView.getBrokerEstates(accessToken)
-
-            Log.d("ReGetBrokerEstate", "${updateUser.accessToken}/${updateUser.refreshToken}")
-
-        }
     }
 
     override fun onRefreshFailure(code: Int, message: String) {

@@ -43,7 +43,6 @@ class MapFragment() : Fragment() , MapViewEventListener, MapDataView, KaKaoView,
     private var infraStore = false
     private var infraConvenience = false
     private var infraFitness = false
-    private var changeZoom = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,6 +72,10 @@ class MapFragment() : Fragment() , MapViewEventListener, MapDataView, KaKaoView,
         binding.mapView.setMapViewEventListener(this)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+    }
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {

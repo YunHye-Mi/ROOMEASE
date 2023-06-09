@@ -58,7 +58,8 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
         user = gson.fromJson(userJson, User::class.java)
 
         messageListAdapter = MessageListAdapter(messageList, user.accessToken)
-        binding.messageRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.messageRv.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.messageRv.adapter = messageListAdapter
 
         roomId = intent.getIntExtra("chatRoomId", 0)
@@ -102,7 +103,13 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
                         //send
                         val sendHeader = StompHeader(StompHeader.DESTINATION, "/pub/chat/msg")
                         val sendHeaderList = mutableListOf(sendHeader, stompHeaders)
-                        stompClient.send(StompMessage(StompCommand.MESSAGE, sendHeaderList, message)).subscribe()
+                        stompClient.send(
+                            StompMessage(
+                                StompCommand.MESSAGE,
+                                sendHeaderList,
+                                message
+                            )
+                        ).subscribe()
                     }
                 }
             }
@@ -111,12 +118,18 @@ class ChatActivity : AppCompatActivity(), ChatView, RefreshView, ReminderView {
 
             }
         })
-                onClickListener()
+        onClickListener()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onStart() {
         super.onStart()
+
+        reminderService.getReminder(user.accessToken, roomId.toLong())
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         reminderService.getReminder(user.accessToken, roomId.toLong())
     }

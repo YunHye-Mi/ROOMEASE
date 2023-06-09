@@ -140,7 +140,7 @@ class ReviewFragment() : Fragment(), ReviewView, RefreshView {
     override fun onDeleteReviewSuccess(message: String) {
         Toast.makeText(context, "해당 리뷰 삭제 완료", Toast.LENGTH_LONG).show()
         reviewRVAdapter.notifyDataSetChanged()
-        binding.reviewTv.text = "전체 리뷰 ${reviewlist.size} 개"
+        binding.reviewCountTv.text = "전체 리뷰 ${reviewlist.size} 개"
         Log.d("DeleteReview/Success", message)
     }
 

@@ -106,23 +106,26 @@ class BookmarkFragment() : Fragment(), BookmarkView, RefreshView {
     }
 
     override fun onRefreshSuccess(accessToken: String, refreshToken: String) {
-        if (isAdded) {
-            val updateUser = User(accessToken, refreshToken, user.nickname, user.registerNumber, user.role)
+        val updateUser =
+            User(accessToken, refreshToken, user.nickname, user.registerNumber, "Broker")
+        this.onAttach(this.requireContext())
+            .let {
+                val gson = Gson()
+                val userJson = gson.toJson(updateUser)
+                val userSpf = this.requireContext()
+                    .getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
+                val editor = userSpf.edit()
+                editor.apply {
+                    putString("User", userJson)
+                }
 
-            val gson = Gson()
-            val userJson = gson.toJson(updateUser)
-            val userSpf = this.requireContext().getSharedPreferences("currentUser", AppCompatActivity.MODE_PRIVATE)
-            val editor = userSpf.edit()
-            editor.apply {
-                putString("User", userJson)
+                editor.apply()
+
+                bookmarkView.getBookmark(accessToken)
+
+                Log.d("ReGetBookmarkList", "${updateUser.accessToken}/${updateUser.refreshToken}")
+
             }
-
-            editor.apply()
-
-            bookmarkView.getBookmark(accessToken)
-
-            Log.d("ReGetReview", "${updateUser.accessToken}/${updateUser.role}")
-        }
     }
 
     override fun onRefreshFailure(code: Int, message: String) {
